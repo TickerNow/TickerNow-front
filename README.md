@@ -1,54 +1,34 @@
-# React + TypeScript + Vite
+# 🚀 StockFlow
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**주식 종목을 입력해 시장 흐름을 분석하고 최신 뉴스를 제공합니다.**
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🔍 프로젝트 개요
 
-## Expanding the ESLint configuration
+**StockFlow**는 사용자가 관심 있는 주식 종목 키워드를 입력하면,  
+관련 시장 데이터를 시각화하고 분석 결과를 요약해 보여주는 웹 애플리케이션입니다.  
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+또한, 최신 주식 뉴스도 함께 제공하여 투자 판단에 도움을 줍니다.
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+---
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## ⭐ 주요 기능
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- 🔎 **주식 종목 검색**  
+  검색 버튼 클릭 시 입력한 키워드를 기반으로 시장 데이터 및 요약 정보 요청
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+- 📈 **시장 데이터 시각화**  
+  차트를 통해 주식 가격 및 흐름을 직관적으로 확인 가능
+
+- 📰 **주식 뉴스 제공**  
+  초기 화면에서 최신 주식 관련 뉴스 목록 표시
+
+- ✍️ **검색 결과 요약**  
+  AI 또는 요약된 텍스트로 시장 동향 간략 소개 (애니메이션 효과 포함)
+
+- ⚠️ **오류 처리 및 알림**  
+  검색 오류 발생 시 토스트 알림 제공
+
+- 💾 **다운로드 버튼 (예정)**  
+  검색 결과 데이터를 파일로 저장할 수 있는 기능
