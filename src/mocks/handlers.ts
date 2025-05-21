@@ -309,5 +309,23 @@ export const handlers = [
 
     http.get("/api/stock-summary-ai", () => {
         return HttpResponse.json(stockSummary);
+    }),
+
+    http.get("/api/check-auth", () => {
+        return HttpResponse.json(
+            {
+            errorMessage: 'Missing session',
+            },
+            { status: 401 },
+        )
+    }),
+
+    http.post("/api/login", () => {
+        return HttpResponse.json(
+            {
+            errorMessage: 'Missing session',
+            },
+            { status: 401 },
+        )
     })
 ];
