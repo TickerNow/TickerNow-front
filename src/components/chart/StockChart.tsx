@@ -52,8 +52,21 @@ export default function StockChart({ data }: Props) {
     const processed = sortedData.map((item) => ({
         ...item,
         name: convertDateFormat(item.date),
-        value: (item.open_price + item.high_price - (item.close_price + item.low_price)) / 2,
+        value: item.close_price,
     }));
+
+    const values = processed.map(item => item.value);
+    const min = Math.min(...values);
+    const max = Math.max(...values);
+    const padding = 5000;
+
+    const minY = Math.floor((min - padding) / 5000) * 5000;
+    const maxY = Math.ceil((max + padding) / 5000) * 5000;
+
+    const ticks = [];
+    for (let i = minY; i <= maxY; i += 5000) {
+        ticks.push(i);
+    }
 
     return (
         <ResponsiveContainer width="100%" height={300}>
@@ -68,7 +81,11 @@ export default function StockChart({ data }: Props) {
             </linearGradient>
             </defs>
             <XAxis dataKey="name" />
-            <YAxis />
+            <YAxis
+                    domain={[minY, maxY]}
+                    ticks={ticks}
+                    tickFormatter={(value) => value.toLocaleString()}
+            />
             <Tooltip content={<CustomTooltip />} />
             <Area
             type="monotone"

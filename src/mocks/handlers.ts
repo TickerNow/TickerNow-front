@@ -2,6 +2,7 @@ import { http, HttpResponse } from "msw";
 import type { News } from "../types/News";
 import type { Stock } from "../types/Stock";
 import type { StockSummary } from "../types/Stock";
+import autoever from './mock_json/hyundai_autoever.json';
 
 const newsData: News[] = [
     {
@@ -70,232 +71,11 @@ const newsData: News[] = [
     }
 ];
 
-const stockData: Stock[]  = [
-    {
-        "name": "SK하이닉스",
-        "open_price": 182000,
-        "high_price": 182900,
-        "low_price": 179100,
-        "close_price": 180800,
-        "price_change": -1200,
-        "change_rate": "-0.66%",
-        "trading_volume": 1851551,
-        "date": "25.04.29"
-    },
-    {
-        "name": "SK하이닉스",
-        "open_price": 183500,
-        "high_price": 183900,
-        "low_price": 179700,
-        "close_price": 182000,
-        "price_change": -2400,
-        "change_rate": "-1.30%",
-        "trading_volume": 2454440,
-        "date": "25.04.28"
-    },
-    {
-        "name": "SK하이닉스",
-        "open_price": 182500,
-        "high_price": 184900,
-        "low_price": 182100,
-        "close_price": 184400,
-        "price_change": 6100,
-        "change_rate": "+3.42%",
-        "trading_volume": 3413222,
-        "date": "25.04.25"
-    },
-    {
-        "name": "SK하이닉스",
-        "open_price": 182800,
-        "high_price": 183400,
-        "low_price": 177600,
-        "close_price": 178300,
-        "price_change": -2700,
-        "change_rate": "-1.49%",
-        "trading_volume": 3149026,
-        "date": "25.04.24"
-    },
-    {
-        "name": "SK하이닉스",
-        "open_price": 179100,
-        "high_price": 181600,
-        "low_price": 178100,
-        "close_price": 181000,
-        "price_change": 7200,
-        "change_rate": "+4.14%",
-        "trading_volume": 3745347,
-        "date": "25.04.23"
-    },
-    {
-        "name": "SK하이닉스",
-        "open_price": 175000,
-        "high_price": 175500,
-        "low_price": 173300,
-        "close_price": 173800,
-        "price_change": -2800,
-        "change_rate": "-1.59%",
-        "trading_volume": 2002542,
-        "date": "25.04.22"
-    },
-    {
-        "name": "SK하이닉스",
-        "open_price": 174800,
-        "high_price": 180000,
-        "low_price": 174500,
-        "close_price": 176600,
-        "price_change": 1600,
-        "change_rate": "+0.91%",
-        "trading_volume": 1819055,
-        "date": "25.04.21"
-    },
-    {
-        "name": "SK하이닉스",
-        "open_price": 174000,
-        "high_price": 175500,
-        "low_price": 172800,
-        "close_price": 175000,
-        "price_change": 0,
-        "change_rate": "0.00%",
-        "trading_volume": 1304677,
-        "date": "25.04.18"
-    },
-    {
-        "name": "SK하이닉스",
-        "open_price": 172100,
-        "high_price": 175400,
-        "low_price": 171800,
-        "close_price": 175000,
-        "price_change": 1000,
-        "change_rate": "+0.57%",
-        "trading_volume": 2986932,
-        "date": "25.04.17"
-    },
-    {
-        "name": "SK하이닉스",
-        "open_price": 176500,
-        "high_price": 177500,
-        "low_price": 173500,
-        "close_price": 174000,
-        "price_change": -6600,
-        "change_rate": "-3.65%",
-        "trading_volume": 2930407,
-        "date": "25.04.16"
-    },
-    {
-        "name": "SK하이닉스",
-        "open_price": 180200,
-        "high_price": 182400,
-        "low_price": 179700,
-        "close_price": 180600,
-        "price_change": 400,
-        "change_rate": "+0.22%",
-        "trading_volume": 1887663,
-        "date": "25.04.15"
-    },
-    {
-        "name": "SK하이닉스",
-        "open_price": 182900,
-        "high_price": 184400,
-        "low_price": 178000,
-        "close_price": 180200,
-        "price_change": -600,
-        "change_rate": "-0.33%",
-        "trading_volume": 3445599,
-        "date": "25.04.14"
-    },
-    {
-        "name": "SK하이닉스",
-        "open_price": 177800,
-        "high_price": 181800,
-        "low_price": 176100,
-        "close_price": 180800,
-        "price_change": -2400,
-        "change_rate": "-1.31%",
-        "trading_volume": 3206784,
-        "date": "25.04.11"
-    },
-    {
-        "name": "SK하이닉스",
-        "open_price": 189700,
-        "high_price": 189900,
-        "low_price": 180000,
-        "close_price": 183200,
-        "price_change": 18200,
-        "change_rate": "+11.03%",
-        "trading_volume": 7832318,
-        "date": "25.04.10"
-    },
-    {
-        "name": "SK하이닉스",
-        "open_price": 170000,
-        "high_price": 170000,
-        "low_price": 162700,
-        "close_price": 165000,
-        "price_change": -4500,
-        "change_rate": "-2.65%",
-        "trading_volume": 5908245,
-        "date": "25.04.09"
-    },
-    {
-        "name": "SK하이닉스",
-        "open_price": 172000,
-        "high_price": 173100,
-        "low_price": 168200,
-        "close_price": 169500,
-        "price_change": 4700,
-        "change_rate": "+2.85%",
-        "trading_volume": 4947180,
-        "date": "25.04.08"
-    },
-    {
-        "name": "SK하이닉스",
-        "open_price": 168000,
-        "high_price": 172800,
-        "low_price": 164800,
-        "close_price": 164800,
-        "price_change": -17400,
-        "change_rate": "-9.55%",
-        "trading_volume": 7842468,
-        "date": "25.04.07"
-    },
-    {
-        "name": "SK하이닉스",
-        "open_price": 187900,
-        "high_price": 189600,
-        "low_price": 178400,
-        "close_price": 182200,
-        "price_change": -12400,
-        "change_rate": "-6.37%",
-        "trading_volume": 9169244,
-        "date": "25.04.04"
-    },
-    {
-        "name": "SK하이닉스",
-        "open_price": 189600,
-        "high_price": 194600,
-        "low_price": 188200,
-        "close_price": 194600,
-        "price_change": -3300,
-        "change_rate": "-1.67%",
-        "trading_volume": 4156940,
-        "date": "25.04.03"
-    },
-    {
-        "name": "SK하이닉스",
-        "open_price": 198800,
-        "high_price": 201500,
-        "low_price": 197300,
-        "close_price": 197900,
-        "price_change": 900,
-        "change_rate": "+0.46%",
-        "trading_volume": 2723930,
-        "date": "25.04.02"
-    }
-]
+const stockData: Stock[]  = autoever;
 
-const stockSummary : StockSummary = {
-    "summary": "2025년 5월 21일 기준, SK하이닉스의 주가는 202,000원이며, 1분기 실적은 매출 17.6조 원, 영업이익 7.44조 원으로 전년 대비 큰 폭의 성장을 보였습니다. HBM(고대역폭 메모리) 시장에서 70%의 점유율로 글로벌 1위를 차지하고 있으며, AI 서버 및 DRAM 수요 증가가 실적을 견인하고 있습니다. 다만 최근 외국인 투자자의 순매도와 공매도 증가, 미국의 반도체 수출 규제 우려 등으로 인해 주가에 조정이 나타나고 있습니다. 애널리스트들은 평균 목표주가를 274,701원으로 제시하며, 약 36%의 상승 여력을 전망합니다. 중장기적으로는 AI 메모리 수요 확대에 따라 성장 가능성이 크다는 평가를 받고 있습니다."
-}
+const stockSummary: StockSummary = {
+    summary: "2025년 5월 21일 기준, 현대오토에버의 주가는 152,000원이며, 최근 1분기 실적은 매출 8,274억 원, 영업이익 710억 원으로 전년 동기 대비 두 자릿수 성장률을 기록했습니다. 스마트 모빌리티 소프트웨어와 차량용 OS 개발 중심으로 사업 포트폴리오를 확대 중이며, 자율주행 및 커넥티드카 관련 기술 확보를 통해 미래차 전환에 적극 대응하고 있습니다. 특히 현대차그룹의 소프트웨어 중심 차량(SDV) 전략에 있어 핵심 계열사로 자리매김하고 있으며, 글로벌 모빌리티 플랫폼 공급 확대로 수익성이 개선되고 있습니다. 최근 외국인 수급은 중립적이나, 국내 기관의 순매수세가 지속되고 있으며, 애널리스트들은 평균 목표주가를 184,000원으로 제시하고 있어 약 21%의 상승 여력을 전망하고 있습니다. 중장기적으로는 차량 전자화 및 소프트웨어 수요 확대에 따른 성장성이 주목받고 있습니다."
+};
 
 
 export const handlers = [
@@ -325,7 +105,7 @@ export const handlers = [
             {
             errorMessage: 'Missing session',
             },
-            { status: 401 },
+            { status: 200 },
         )
     })
 ];
