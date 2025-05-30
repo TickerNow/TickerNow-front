@@ -132,13 +132,30 @@ export default function StockChart({ data }: Props) {
     const values = slicedData.map(item => item.value);
     const min = Math.min(...values);
     const max = Math.max(...values);
-    const padding = 5000;
 
-    const minY = Math.floor((min - padding) / 5000) * 5000;
-    const maxY = Math.ceil((max + padding) / 5000) * 5000;
+    const range = max - min;
+
+    // range에 따라 padding을 설정
+    let padding;
+    if (range > 100000) {
+        padding = 20000;
+    } else if (range > 50000) {
+        padding = 10000;
+    } else if (range > 20000) {
+        padding = 5000;
+    } else if (range > 10000) {
+        padding = 2000;
+    } else if (range > 5000) {
+        padding = 1000;
+    } else {
+        padding = 500;
+    }
+
+    const minY = Math.floor((min - padding) / padding) * padding;
+    const maxY = Math.ceil((max + padding) / padding) * padding;
 
     const ticks = [];
-    for (let i = minY; i <= maxY; i += 5000) {
+    for (let i = minY; i <= maxY; i += padding) {
         ticks.push(i);
     }
 
@@ -180,6 +197,7 @@ export default function StockChart({ data }: Props) {
                         </defs>
                         <XAxis dataKey="name" />
                         <YAxis
+                                width={70}
                                 domain={[minY, maxY]}
                                 ticks={ticks}
                                 tickFormatter={(value) => value.toLocaleString()}
