@@ -5,6 +5,11 @@ import type { StockSummary } from "../types/Stock";
 import autoever from './mock_data/hyundai_autoever.json';
 import { mockUsers } from './mock_data/mockUser';
 import type { SignUpFormData } from "../types/SignUp";
+import type { LoginFormData } from "../types/Login";
+import { generateJWT, decodeJWT } from "../utils/simpleJwt";
+
+const JWT_SECRET = "y7P4vZr9kLxT8mNq3sJfUdB2HwEeXoCg";
+const JWT_EXPIRES_IN = "1h";
 
 const newsData: News[] = [
     {
@@ -93,22 +98,53 @@ export const handlers = [
         return HttpResponse.json(stockSummary);
     }),
 
-    http.get("/api/check-auth", () => {
-        return HttpResponse.json(
-            {
-            errorMessage: 'Missing session',
-            },
-            { status: 401 },
-        )
+    http.get("/api/check-auth", ({ cookies }) => {
+        const token = cookies["jwt"];
+
+        if (!token) {
+            return HttpResponse.json({ errorMessage: "Missing session" }, { status: 401 });
+        }
+
+        try {
+            const payload = decodeJWT(token);
+            const user = mockUsers.find(u => u.id === payload.username);
+            if (!user) {
+                return HttpResponse.json({ errorMessage: "Invalid user" }, { status: 401 });
+            }
+
+            return HttpResponse.json(
+                { message: "인증됨", user: { id: user.id, nickname: user.nickname } },
+                { status: 200 }
+            );
+        } catch (error) {
+            return HttpResponse.json({ errorMessage: "Invalid token" }, { status: 401 });
+        }
     }),
 
-    http.post("/api/login", () => {
+    http.post("/api/login", async ({ request }) => {
+        console.log(request)
+        const { username, password } = (await request.json()) as LoginFormData;
+
+        const user = mockUsers.find(u => u.id === username);
+
+        if (!user || user.password !== password) {
+            return HttpResponse.json({ message: "아이디 또는 비밀번호 오류" }, { status: 401 });
+        }
+
+        const expiresInSeconds = 3600;
+        const exp = Math.floor(Date.now() / 1000) + expiresInSeconds;
+
+        const token = generateJWT({ username: user.id, exp });
+
         return HttpResponse.json(
+            { message: "로그인 성공" },
             {
-            errorMessage: 'Missing session',
+            status: 200,
+            headers: {
+                "Set-Cookie": `jwt=${token}; Path=/; Max-Age=3600;`,
             },
-            { status: 200 },
-        )
+            }
+        );
     }),
 
     http.post("/sign_up", async ({ request }) => {
