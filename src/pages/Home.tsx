@@ -14,6 +14,7 @@ import TypingText from "../components/Text/TypingText";
 import { useAuthStore } from "../store/useAuthStore";
 import LoginModal from "../components/Login/LoginModal";
 import SignUpModal from "../components/Join/JoinModal";
+import NavBar from "../components/Navbar/Navbar";
 
 export default function Home() {
     
@@ -43,7 +44,10 @@ export default function Home() {
     }, [isErrorStock]);
 
     return (
-        <div className="w-full min-h-screen bg-[#181A20] flex flex-col items-center px-4 relative">
+        <div className="w-full min-h-screen bg-[#181A20] flex flex-col items-center px-0 relative">
+            {/* 네비게이션 바 */}
+            <NavBar />
+
             {/* 로그인 모달 */}
             {loginModalVisible && <LoginModal />}
 
