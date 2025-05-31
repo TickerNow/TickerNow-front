@@ -197,4 +197,38 @@ export const handlers = [
         return HttpResponse.json({ error: error.message }, { status: 500 });
         }
     }),
+
+    // 기업뉴스 크롤링 mock
+    http.post("/daum_search", async ({ request }) => {
+        // 요청 바디에서 JSON 데이터 파싱
+        const body = await request.json() as { search: string; page_count: number };
+        const { search, page_count } = body;
+
+        // 10초 대기 (테스트용 지연)
+        await new Promise((resolve) => setTimeout(resolve, 10000));
+
+        return HttpResponse.json({
+        message: `'${search}' 에 대한 뉴스 ${page_count} 페이지 크롤링 및 저장 완료`,
+        });
+    }),
+
+    // 주식 데이터 크롤링 mock
+    http.post("/stock_load", async ({request}) => {
+    try {
+        const body = await request.json() as { search?: string };
+        const { search } = body;
+
+        if (!search) {
+        return HttpResponse.json({ error: "검색어(search)가 필요합니다." }, { status: 400 });
+        }
+
+        await new Promise(resolve => setTimeout(resolve, 10000));
+
+        return HttpResponse.json({
+            message: `'${search}'에 대한 금융 정보 크롤링 및 저장이 완료되었습니다.`,
+        });
+    } catch (error) {
+        return HttpResponse.json({ error: (error as Error).message }, { status: 500 });
+    }
+    })
 ];
