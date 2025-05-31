@@ -7,6 +7,7 @@ const LoginModal = () => {
 
   const login = useAuthStore((s) => s.login);
   const hideLoginModal = useAuthStore((s) => s.hideLoginModal);
+  const showSignUpModal = useAuthStore((s) => s.showSignUpModal);
 
   // ESC 키 누르면 닫히도록
   useEffect(() => {
@@ -58,7 +59,10 @@ const LoginModal = () => {
           </button>
 
           <button
-            onClick={() => alert("회원가입 기능을 연결하세요")}
+            onClick={() => {
+              hideLoginModal();
+              showSignUpModal();
+            }}
             className="text-gray-400 text-sm underline w-full text-center hover:text-white"
           >
             Sign up

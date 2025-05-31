@@ -1,5 +1,6 @@
 import {create} from 'zustand';
 import axios from 'axios';
+import type { SignUpFormData } from './../types/SignUp';
 
 interface AuthStore {
     isLoggedIn: boolean;
@@ -9,11 +10,17 @@ interface AuthStore {
     checkAuth: () => Promise<void>;
     showLoginModal: () => void;
     hideLoginModal: () => void;
+
+    signUpModalVisible: boolean;
+    showSignUpModal: () => void;
+    hideSignUpModal: () => void;
+    signUp: (userData: SignUpFormData) => Promise<void>;
 }
 
 export const useAuthStore = create<AuthStore>((set) => ({
     isLoggedIn: false,
     loginModalVisible: false,
+    signUpModalVisible: false,
 
     login: async (username, password) => {
         try {
@@ -51,4 +58,36 @@ export const useAuthStore = create<AuthStore>((set) => ({
 
     showLoginModal: () => set({ loginModalVisible: true }),
     hideLoginModal: () => set({ loginModalVisible: false }),
+
+    showSignUpModal: () => set({ signUpModalVisible: true }),
+    hideSignUpModal: () => set({ signUpModalVisible: false }),
+
+    signUp: async (userData) => {
+        try {
+
+        const {confirm, ...rest} = userData;
+        const payload = {
+            ...rest,
+            age: Number(userData.age),
+            joined_at: new Date().toISOString().slice(0, 10),
+        };
+        await axios.post("/sign_up", payload, { withCredentials: true });
+        alert("회원가입이 완료되었습니다.");
+        set({ signUpModalVisible: false });
+        } catch (err: any) {
+        if (axios.isAxiosError(err) && err.response) {
+            const status = err.response.status;
+            if (status === 400) {
+                const errorMsg = err.response.data.error;
+                alert(errorMsg);
+            } else if (status === 500) {
+            alert("서버 오류가 발생했습니다.\n잠시 후 다시 시도하세요.");
+            } else {
+            alert("알 수 없는 오류가 발생했습니다.\n잠시 후 다시 시도하세요.");
+            }
+        } else {
+            alert("네트워크 오류가 발생했습니다.\n잠시 후 다시 시도하세요.");
+        }
+        }
+    },
 }))

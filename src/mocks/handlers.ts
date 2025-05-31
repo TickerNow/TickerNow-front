@@ -2,7 +2,9 @@ import { http, HttpResponse } from "msw";
 import type { News } from "../types/News";
 import type { Stock } from "../types/Stock";
 import type { StockSummary } from "../types/Stock";
-import autoever from './mock_json/hyundai_autoever.json';
+import autoever from './mock_data/hyundai_autoever.json';
+import { mockUsers } from './mock_data/mockUser';
+import type { SignUpFormData } from "../types/SignUp";
 
 const newsData: News[] = [
     {
@@ -107,5 +109,56 @@ export const handlers = [
             },
             { status: 200 },
         )
-    })
+    }),
+
+    http.post("/sign_up", async ({ request }) => {
+        try {
+        const data = (await request.json()) as SignUpFormData;
+
+        const {
+            name,
+            sex,
+            age,
+            birth_date,
+            id,
+            nickname,
+            password,
+            joined_at = new Date().toISOString(),
+        } = data;
+
+        // ✅ ID 중복 체크
+        const idExists = mockUsers.some(user => user.id === id);
+        if (idExists) {
+            return HttpResponse.json(
+            { error: "중복된 아이디가 존재합니다. 다른 아이디를 사용해주세요." },
+            { status: 400 }
+            );
+        }
+
+        // ✅ 닉네임 중복 체크
+        const nicknameExists = mockUsers.some(user => user.nickname === nickname);
+        if (nicknameExists) {
+            return HttpResponse.json(
+            { error: "중복된 닉네임이 존재합니다. 다른 닉네임을 사용해주세요." },
+            { status: 400 }
+            );
+        }
+
+        // ✅ 회원 가입 처리 (메모리에 저장)
+        mockUsers.push({
+            id,
+            nickname,
+            name,
+            sex,
+            age,
+            birth_date,
+            password, // 실제 프로젝트면 hash 처리, 여기선 생략
+            joined_at,
+        });
+
+        return HttpResponse.json({ message: "회원가입이 완료되었습니다." }, { status: 200 });
+        } catch (error: any) {
+        return HttpResponse.json({ error: error.message }, { status: 500 });
+        }
+    }),
 ];

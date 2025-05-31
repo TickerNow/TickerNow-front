@@ -13,10 +13,11 @@ import { useStockSummary } from "../utils/useStockSummary";
 import TypingText from "../components/Text/TypingText";
 import { useAuthStore } from "../store/useAuthStore";
 import LoginModal from "../components/Login/LoginModal";
+import SignUpModal from "../components/Join/JoinModal";
 
 export default function Home() {
     
-    const { isLoggedIn, loginModalVisible, showLoginModal } =useAuthStore();
+    const { isLoggedIn, loginModalVisible, signUpModalVisible, showLoginModal} =useAuthStore();
     const { news, isLoading, isError } = useLatestNews();
     
     const [keyword, setKeyword] = useState<string>("");
@@ -45,6 +46,9 @@ export default function Home() {
         <div className="w-full min-h-screen bg-[#181A20] flex flex-col items-center px-4 relative">
             {/* 로그인 모달 */}
             {loginModalVisible && <LoginModal />}
+
+            {/* 회원가입 모달 */}
+            {signUpModalVisible && <SignUpModal />}
 
             {/* 👇 문구 추가 */}
             {!searchTerm  && <TypingHeadline />}
