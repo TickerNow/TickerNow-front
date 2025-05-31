@@ -7,4 +7,8 @@ export default defineConfig({
   optimizeDeps: {
     include: ['msw'],
   },
+  server: {
+    allowedHosts: ['.ngrok-free.app'], // 모든 ngrok 주소 허용
+    host: true // 외부 접근 허용 (필수)
+  }
 })
