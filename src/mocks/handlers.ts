@@ -141,7 +141,7 @@ export const handlers = [
             {
             status: 200,
             headers: {
-                "Set-Cookie": `jwt=${token}; Path=/; Max-Age=3600;`,
+                "Set-Cookie": `jwt=${token}; Path=/; Max-Age=${expiresInSeconds};`,
             },
             }
         );
