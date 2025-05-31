@@ -1,10 +1,15 @@
 import {create} from 'zustand';
 import axios from 'axios';
 import type { SignUpFormData } from './../types/SignUp';
+import type { UserInfo } from '../types/User';
 
 interface AuthStore {
     isLoggedIn: boolean;
     loginModalVisible: boolean;
+
+    user: UserInfo | null;
+    loading: boolean;
+
     login: (username: string, password: string) => Promise<void>;
     logout: () => Promise<void>;
     checkAuth: () => Promise<void>;
@@ -22,10 +27,14 @@ export const useAuthStore = create<AuthStore>((set) => ({
     loginModalVisible: false,
     signUpModalVisible: false,
 
+    user: null,
+    loading: true,
+
     login: async (username, password) => {
         try {
-            await axios.post("/api/login", { username, password }, { withCredentials: true });
+            await axios.post("/api/login", { username, password });
             set({ isLoggedIn: true, loginModalVisible: false });
+            window.location.href = "/"; 
         } catch (err: any) {
             if (axios.isAxiosError(err) && err.response) {
             const status = err.response.status;
@@ -43,16 +52,36 @@ export const useAuthStore = create<AuthStore>((set) => ({
     },
 
     logout: async () => {
-        await axios.post("/api/logout", {}, { withCredentials: true });
-        set({ isLoggedIn: false });
-    },
+        // 쿠키 삭제 (httpOnly가 아니어야 가능)
+        document.cookie.split(";").forEach((cookie) => {
+        const eqPos = cookie.indexOf("=");
+        const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
+        document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;`;
+        });
+
+        // localStorage 비우기
+        localStorage.clear();
+
+        // sessionStorage 비우기
+        sessionStorage.clear();
+        },
 
     checkAuth: async () => {
         try {
-            await axios.get("/api/check-auth", { withCredentials: true });
-            set({ isLoggedIn: true });
+            const response = await axios.get("/api/check-auth", { withCredentials: true });
+            const user = response.data.user as UserInfo | undefined;
+            
+            set({
+                isLoggedIn: true,
+                user: {
+                    id: user?.id ?? "",
+                    nickname: user?.nickname ?? "",
+                    is_admin: user?.is_admin ?? false,
+                },
+                loading: false
+            });
         } catch {
-            set({ isLoggedIn: false });
+            set({ isLoggedIn: false, user: null, loading: false});
         }
     },
 
@@ -71,7 +100,7 @@ export const useAuthStore = create<AuthStore>((set) => ({
             age: Number(userData.age),
             joined_at: new Date().toISOString().slice(0, 10),
         };
-        await axios.post("/sign_up", payload, { withCredentials: true });
+        await axios.post("/sign_up", payload);
         alert("회원가입이 완료되었습니다.");
         set({ signUpModalVisible: false });
         } catch (err: any) {

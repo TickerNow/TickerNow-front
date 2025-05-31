@@ -113,7 +113,7 @@ export const handlers = [
             }
 
             return HttpResponse.json(
-                { message: "인증됨", user: { id: user.id, nickname: user.nickname } },
+                { message: "인증됨", user: { id: user.id, nickname: user.nickname, is_admin : true } },
                 { status: 200 }
             );
         } catch (error) {
