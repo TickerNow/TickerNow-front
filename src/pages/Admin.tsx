@@ -14,6 +14,7 @@ async function newsFetcher(url: string, { arg }: { arg: { search: string; page_c
 }
 
 export default function AdminHome() {
+    const [selectedTab, setSelectedTab] = useState<"stock" | "news">("stock");
     const [search, setSearch] = useState("");
     const [pageCount, setPageCount] = useState(1);
     const navigate = useNavigate();
@@ -50,63 +51,93 @@ export default function AdminHome() {
 
     return (
         <div className="w-full min-h-screen bg-[#181A20] text-white px-4 py-10 flex flex-col items-center">
-            <h1 className="text-3xl font-bold mb-8 text-center">🛠️ 관리자 페이지</h1>
+            <h1 className="text-2xl font-bold mb-6 text-center text-[#FCD535]">관리자 페이지</h1>
 
-            <div className="w-full max-w-2xl grid gap-6">
-                {/* 공통 설정 */}
-                <div className="bg-[#242730] p-6 rounded-2xl shadow-lg border border-gray-700">
-                    <h2 className="text-xl font-semibold mb-4">📌 공통 설정</h2>
-                    <div className="flex flex-col gap-3">
-                        <label className="text-sm">검색어 (기업명)</label>
-                        <input
-                            className="p-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            type="text"
-                            value={search}
-                            onChange={(e) => setSearch(e.target.value)}
-                            placeholder="예: 삼성전자"
-                        />
-                        <label className="text-sm">뉴스 페이지 수</label>
-                        <input
-                            className="p-2 rounded bg-gray-700 text-white"
-                            type="number"
-                            min={1}
-                            value={pageCount}
-                            onChange={(e) => setPageCount(Number(e.target.value))}
-                        />
+            {/* 탭 버튼 */}
+            <div className="flex mb-6 gap-4">
+                <button
+                    className={`px-6 py-2 rounded ${selectedTab === "stock" ? "bg-[#FCD535] text-black" : "bg-[#2C2F38] text-white"}`}
+                    onClick={() => setSelectedTab("stock")}
+                >
+                    주식 크롤링
+                </button>
+                <button
+                    className={`px-6 py-2 rounded ${selectedTab === "news" ? "bg-[#FCD535] text-black" : "bg-[#2C2F38] text-white"}`}
+                    onClick={() => setSelectedTab("news")}
+                >
+                    뉴스 크롤링
+                </button>
+            </div>
+
+            <div className="w-full max-w-2xl grid gap-8">
+                {/* 탭별 설정 */}
+                <div className="bg-[#1E2026] p-6 rounded-md border border-gray-500 shadow-xl">
+                    <h2 className="text-xl font-semibold mb-4 text-[#FCD535]">
+                        {selectedTab === "stock" ? "주식 설정" : "뉴스 설정"}
+                    </h2>
+
+                    <div className="flex flex-col gap-4">
+                        <div className="flex flex-col gap-1">
+                            <label className="text-sm text-[#E0E0E0]">검색어 (기업명)</label>
+                            <input
+                                className="p-2 rounded-md bg-[#181A20] text-white focus:outline-none focus:ring-2 focus:ring-[#FCD535]"
+                                type="text"
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
+                                placeholder="예: 삼성전자"
+                            />
+                        </div>
+
+                        {selectedTab === "news" && (
+                            <div className="flex flex-col gap-1">
+                                <label className="text-sm text-[#E0E0E0]">뉴스 페이지 수</label>
+                                <input
+                                    className="p-2 rounded-md bg-[#181A20] text-white focus:outline-none focus:ring-2 focus:ring-[#FCD535]"
+                                    type="number"
+                                    min={1}
+                                    value={pageCount}
+                                    onChange={(e) => setPageCount(Number(e.target.value))}
+                                />
+                            </div>
+                        )}
                     </div>
                 </div>
 
-                {/* 주식 크롤링 */}
-                <div className="bg-[#242730] p-6 rounded-2xl shadow-lg border border-gray-700">
-                    <h2 className="text-xl font-semibold mb-4">📈 주식 데이터 크롤링</h2>
-                    <button
-                        className="w-full p-3 bg-blue-600 rounded hover:bg-blue-700 transition disabled:opacity-50"
-                        onClick={handleStockCrawl}
-                        disabled={isStockLoading}
-                    >
-                        {isStockLoading ? "주식 크롤링 중..." : "크롤링 실행"}
-                    </button>
-                </div>
+                {/* 주식 버튼 */}
+                {selectedTab === "stock" && (
+                    <div className="bg-[#1E2026] p-6 rounded-md border border-gray-500 shadow-xl">
+                        <h2 className="text-xl font-semibold mb-4 text-[#FCD535]">주식 데이터 크롤링</h2>
+                        <button
+                            className="w-full p-3 bg-[#FCD535] text-black font-semibold rounded hover:brightness-90 transition disabled:opacity-50"
+                            onClick={handleStockCrawl}
+                            disabled={isStockLoading}
+                        >
+                            {isStockLoading ? "주식 크롤링 중..." : "크롤링 실행"}
+                        </button>
+                    </div>
+                )}
 
-                {/* 뉴스 크롤링 */}
-                <div className="bg-[#242730] p-6 rounded-2xl shadow-lg border border-gray-700">
-                    <h2 className="text-xl font-semibold mb-4">📰 다음 뉴스 크롤링</h2>
-                    <button
-                        className="w-full p-3 bg-green-600 rounded hover:bg-green-700 transition disabled:opacity-50"
-                        onClick={handleDaumNewsCrawl}
-                        disabled={isNewsLoading}
-                    >
-                        {isNewsLoading ? "뉴스 크롤링 중..." : "뉴스 크롤링 실행"}
-                    </button>
-                </div>
+                {/* 뉴스 버튼 */}
+                {selectedTab === "news" && (
+                    <div className="bg-[#1E2026] p-6 rounded-md border border-gray-500 shadow-xl">
+                        <h2 className="text-xl font-semibold mb-4 text-[#FCD535]">다음 뉴스 크롤링</h2>
+                        <button
+                            className="w-full p-3 bg-[#FCD535] text-black font-semibold rounded hover:brightness-90 transition disabled:opacity-50"
+                            onClick={handleDaumNewsCrawl}
+                            disabled={isNewsLoading}
+                        >
+                            {isNewsLoading ? "뉴스 크롤링 중..." : "뉴스 크롤링 실행"}
+                        </button>
+                    </div>
+                )}
 
                 {/* 메인으로 */}
                 <button
-                    className="w-full p-3 bg-gray-600 rounded transition mt-4 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-700 disabled:hover:bg-gray-600"
+                    className="w-full p-3 text-[#E0E0E0] border-none rounded transition mt-4 hover:bg-[#2C2F38] disabled:opacity-50 disabled:cursor-not-allowed underline"
                     disabled={isStockLoading || isNewsLoading}
                     onClick={() => navigate("/")}
                 >
-                    ⬅️ 메인 페이지로 돌아가기
+                    메인 페이지로 돌아가기
                 </button>
             </div>
         </div>
