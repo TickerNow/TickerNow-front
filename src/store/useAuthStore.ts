@@ -97,7 +97,6 @@ export const useAuthStore = create<AuthStore>((set) => ({
         const {confirm, ...rest} = userData;
         const payload = {
             ...rest,
-            age: Number(userData.age),
             joined_at: new Date().toISOString().slice(0, 10),
         };
         await axios.post("/sign_up", payload);

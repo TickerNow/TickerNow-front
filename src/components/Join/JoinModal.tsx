@@ -5,7 +5,6 @@ const SignUpModal = () => {
     const [form, setForm] = useState({
         name: "",
         sex: "남자",
-        age: "",
         birth_date: "",
         id: "",
         nickname: "",
@@ -39,7 +38,6 @@ const SignUpModal = () => {
         }
         const userData = {
         ...form,
-        age: Number(form.age),
         joined_at: new Date().toISOString().slice(0, 10), // yyyy-mm-dd
         };
 
@@ -80,15 +78,6 @@ const SignUpModal = () => {
                     className="bg-[#181A20] text-white placeholder-white/60 px-4 py-2 w-full mb-4 rounded-sm outline-none border border-gray-600"
                 />
                 <div className="flex gap-3 mb-4">
-                    <input
-                        name="age"
-                        type="number"
-                        placeholder="나이"
-                        value={form.age}
-                        onChange={handleChange}
-                        min={1}
-                        className="bg-[#181A20] text-white placeholder-white/60 placeholder:text-[12px] px-4 py-2 rounded-sm outline-none border border-gray-600 flex-[2] min-w-0 text-[12px]"
-                    />
                     <select
                         name="sex"
                         value={form.sex}
