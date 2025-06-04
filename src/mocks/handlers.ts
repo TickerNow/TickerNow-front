@@ -154,7 +154,6 @@ export const handlers = [
         const {
             name,
             sex,
-            age,
             birth_date,
             id,
             nickname,
@@ -180,13 +179,25 @@ export const handlers = [
             );
         }
 
+        function getAgeFromBirthDate(birthDate: string): number {
+            const today = new Date();
+            const birth = new Date(birthDate);
+
+            const yearDiff = today.getFullYear() - birth.getFullYear();
+            const isBirthdayPassed =
+                today.getMonth() > birth.getMonth() ||
+                (today.getMonth() === birth.getMonth() && today.getDate() >= birth.getDate());
+
+            return yearDiff - (isBirthdayPassed ? 0 : 1);
+        }
+
         // ✅ 회원 가입 처리 (메모리에 저장)
         mockUsers.push({
             id,
             nickname,
             name,
             sex,
-            age,
+            age : getAgeFromBirthDate(birth_date),
             birth_date,
             password, // 실제 프로젝트면 hash 처리, 여기선 생략
             joined_at,
