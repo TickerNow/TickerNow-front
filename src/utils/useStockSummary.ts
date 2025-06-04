@@ -13,7 +13,7 @@ const fetcher = (url: string) =>
 
 export function useStockSummary(keyword : string) {
     const { data, error, isLoading } = useSWR<StockSummary>(
-            keyword ? `${apiUrl}/api/stock-summary-ai?keyword=${encodeURIComponent(keyword)}` : null,
+            keyword ? `${apiUrl}/stock-summary-ai?keyword=${encodeURIComponent(keyword)}` : null,
             fetcher);
 
         return {

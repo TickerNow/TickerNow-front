@@ -86,19 +86,19 @@ const stockSummary: StockSummary = {
 
 
 export const handlers = [
-    http.get("/api/news", ()=> {
+    http.get("/stock_news", ()=> {
         return HttpResponse.json(newsData);
     }),
 
-    http.get("/api/stock", ()=> {
+    http.post("/DB_stock_search", ({request})=> {
         return HttpResponse.json(stockData);
     }),
 
-    http.get("/api/stock-summary-ai", () => {
+    http.get("/stock-summary-ai", () => {
         return HttpResponse.json(stockSummary);
     }),
 
-    http.get("/api/check-auth", ({ cookies }) => {
+    http.get("/check-auth", ({ cookies }) => {
         const token = cookies["jwt"];
 
         if (!token) {
@@ -121,7 +121,7 @@ export const handlers = [
         }
     }),
 
-    http.post("/api/login", async ({ request }) => {
+    http.post("/login", async ({ request }) => {
         console.log(request)
         const { username, password } = (await request.json()) as LoginFormData;
 

@@ -12,7 +12,7 @@ const fetcher = (url: string) =>
     }).then(res => res.data);
 
 export function useLatestNews() {
-    const { data, error, isLoading } = useSWR<News[]>(`${apiUrl}/api/news`, fetcher);
+    const { data, error, isLoading } = useSWR<News[]>(`${apiUrl}/stock_news`, fetcher);
 
     return {
         news: data,

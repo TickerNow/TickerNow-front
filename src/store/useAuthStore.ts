@@ -33,7 +33,7 @@ export const useAuthStore = create<AuthStore>((set) => ({
 
     login: async (username, password) => {
         try {
-            await axios.post(`${apiUrl}/api/login`, { username, password }, {
+            await axios.post(`${apiUrl}/login`, { username, password }, {
                     headers: {
                     'Content-Type': 'application/json',
                     'ngrok-skip-browser-warning': '69420',
@@ -74,7 +74,7 @@ export const useAuthStore = create<AuthStore>((set) => ({
 
     checkAuth: async () => {
         try {
-            const response = await axios.get(`${apiUrl}/api/check-auth`, { 
+            const response = await axios.get(`${apiUrl}/check-auth`, { 
                 withCredentials: true,
                 headers: {
                     'Content-Type': 'application/json',
