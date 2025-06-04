@@ -1,6 +1,7 @@
 import useSWR from "swr";
 import type { Stock } from "../types/Stock";
 import axios from "axios";
+const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
 const fetcher = (url: string) =>
     axios.get(url, {
@@ -13,7 +14,7 @@ const fetcher = (url: string) =>
 export function useStockItem(keyword : string) {
     // keyword가 없으면 null 넘겨서 fetch 안 함
     const { data, error, isLoading } = useSWR<Stock[]>(
-        keyword ? `/api/stock?keyword=${encodeURIComponent(keyword)}` : null,
+        keyword ? `${apiUrl}/api/stock?keyword=${encodeURIComponent(keyword)}` : null,
         fetcher
     );
 

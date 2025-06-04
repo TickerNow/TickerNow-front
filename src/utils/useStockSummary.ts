@@ -1,6 +1,7 @@
 import useSWR from "swr";
 import type { StockSummary } from "../types/Stock";
 import axios from "axios";
+const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
 const fetcher = (url: string) =>
     axios.get(url, {
@@ -12,7 +13,7 @@ const fetcher = (url: string) =>
 
 export function useStockSummary(keyword : string) {
     const { data, error, isLoading } = useSWR<StockSummary>(
-            keyword ? `/api/stock-summary-ai?keyword=${encodeURIComponent(keyword)}` : null,
+            keyword ? `${apiUrl}/api/stock-summary-ai?keyword=${encodeURIComponent(keyword)}` : null,
             fetcher);
 
         return {

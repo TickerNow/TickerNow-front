@@ -2,6 +2,7 @@ import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useSWRMutation from "swr/mutation";
+const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
 async function stockFetcher(url: string, { arg }: { arg: { search: string } }) {
     const res = await axios.post(url, arg, {
@@ -32,12 +33,12 @@ export default function AdminHome() {
     const {
         trigger: triggerStock,
         isMutating: isStockLoading,
-    } = useSWRMutation("/stock_load", stockFetcher);
+    } = useSWRMutation(`${apiUrl}/stock_load`, stockFetcher);
 
     const {
         trigger: triggerNews,
         isMutating: isNewsLoading,
-    } = useSWRMutation("/daum_search", newsFetcher);
+    } = useSWRMutation(`${apiUrl}/daum_search`, newsFetcher);
 
     const handleStockCrawl = async () => {
         if (!search.trim()) return alert("검색어를 입력하세요.");

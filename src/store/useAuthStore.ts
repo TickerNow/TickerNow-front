@@ -2,6 +2,7 @@ import {create} from 'zustand';
 import axios from 'axios';
 import type { SignUpFormData } from './../types/SignUp';
 import type { UserInfo } from '../types/User';
+const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
 interface AuthStore {
     isLoggedIn: boolean;
@@ -32,7 +33,7 @@ export const useAuthStore = create<AuthStore>((set) => ({
 
     login: async (username, password) => {
         try {
-            await axios.post("/api/login", { username, password }, {
+            await axios.post(`${apiUrl}/api/login`, { username, password }, {
                     headers: {
                     'Content-Type': 'application/json',
                     'ngrok-skip-browser-warning': '69420',
@@ -73,7 +74,7 @@ export const useAuthStore = create<AuthStore>((set) => ({
 
     checkAuth: async () => {
         try {
-            const response = await axios.get("/api/check-auth", { 
+            const response = await axios.get(`${apiUrl}/api/check-auth`, { 
                 withCredentials: true,
                 headers: {
                     'Content-Type': 'application/json',
@@ -110,7 +111,7 @@ export const useAuthStore = create<AuthStore>((set) => ({
             ...rest,
             joined_at: new Date().toISOString().slice(0, 10),
         };
-        await axios.post("/sign_up", payload, {
+        await axios.post(`${apiUrl}/sign_up`, payload, {
                     headers: {
                     'Content-Type': 'application/json',
                     'ngrok-skip-browser-warning': '69420',
