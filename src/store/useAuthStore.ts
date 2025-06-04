@@ -33,12 +33,18 @@ export const useAuthStore = create<AuthStore>((set) => ({
 
     login: async (username, password) => {
         try {
-            await axios.post(`${apiUrl}/login`, { username, password }, {
+            const response = await axios.post(`${apiUrl}/login`, { id : username, password }, {
                     headers: {
                     'Content-Type': 'application/json',
                     'ngrok-skip-browser-warning': '69420',
                     },
                 });
+
+            const token = response.headers['authorization']; // "Bearer xxx"
+            if (token) {
+                const jwt = token.replace('Bearer ', '');
+                localStorage.setItem("Authorization", jwt);
+            }
             set({ isLoggedIn: true, loginModalVisible: false });
             window.location.href = "/"; 
         } catch (err: any) {
@@ -58,18 +64,7 @@ export const useAuthStore = create<AuthStore>((set) => ({
     },
 
     logout: async () => {
-        // 쿠키 삭제 (httpOnly가 아니어야 가능)
-        document.cookie.split(";").forEach((cookie) => {
-        const eqPos = cookie.indexOf("=");
-        const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
-        document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;`;
-        });
-
-        // localStorage 비우기
         localStorage.clear();
-
-        // sessionStorage 비우기
-        sessionStorage.clear();
         },
 
     checkAuth: async () => {
@@ -79,14 +74,15 @@ export const useAuthStore = create<AuthStore>((set) => ({
                 headers: {
                     'Content-Type': 'application/json',
                     'ngrok-skip-browser-warning': '69420',
+                    'Authorization' : localStorage.getItem("Authorization")
                 }
-             });
-            const user = response.data.user as UserInfo | undefined;
+            });
+            const user = response.data as UserInfo | undefined;
             
             set({
                 isLoggedIn: true,
                 user: {
-                    id: user?.id ?? "",
+                    user_id: user?.user_id ?? "",
                     nickname: user?.nickname ?? "",
                     is_admin: user?.is_admin ?? false,
                 },

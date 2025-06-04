@@ -11,8 +11,9 @@ import type { Stock } from "../../types/Stock";
 import { useRef, useState } from "react";
 
 function convertDateFormat(dateStr: string): string {
-    const [yy, mm, dd] = dateStr.split(".");
-    return `20${yy}-${mm}-${dd}`;
+    const delimiter = dateStr.includes('.') ? '.' : '-';
+    const [yy, mm, dd] = dateStr.split(delimiter);
+    return `${yy}-${mm}-${dd}`;
 }
 
 interface Props {

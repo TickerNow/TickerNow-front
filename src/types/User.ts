@@ -1,5 +1,5 @@
 export interface UserInfo {
-    id: string | null;
+    user_id: string | null;
     nickname: string | null;
     is_admin: boolean;
 }

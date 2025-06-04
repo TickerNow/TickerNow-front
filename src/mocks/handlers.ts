@@ -98,8 +98,8 @@ export const handlers = [
         return HttpResponse.json(stockSummary);
     }),
 
-    http.get("/check-auth", ({ cookies }) => {
-        const token = cookies["jwt"];
+    http.get("/check-auth", ({ request }) => {
+        const token = request.headers.get("authorization");
 
         if (!token) {
             return HttpResponse.json({ errorMessage: "Missing session" }, { status: 401 });
@@ -107,13 +107,13 @@ export const handlers = [
 
         try {
             const payload = decodeJWT(token);
-            const user = mockUsers.find(u => u.id === payload.username);
+            const user = mockUsers.find(u => u.id === payload.user_id);
             if (!user) {
                 return HttpResponse.json({ errorMessage: "Invalid user" }, { status: 401 });
             }
 
             return HttpResponse.json(
-                { message: "인증됨", user: { id: user.id, nickname: user.nickname, is_admin : true } },
+                { user_id: user.id, nickname: user.nickname, is_admin : true },
                 { status: 200 }
             );
         } catch (error) {
@@ -122,10 +122,9 @@ export const handlers = [
     }),
 
     http.post("/login", async ({ request }) => {
-        console.log(request)
-        const { username, password } = (await request.json()) as LoginFormData;
+        const { id, password } = (await request.json()) as LoginFormData;
 
-        const user = mockUsers.find(u => u.id === username);
+        const user = mockUsers.find(u => u.id === id);
 
         if (!user || user.password !== password) {
             return HttpResponse.json({ message: "아이디 또는 비밀번호 오류" }, { status: 401 });
@@ -134,15 +133,15 @@ export const handlers = [
         const expiresInSeconds = 3600;
         const exp = Math.floor(Date.now() / 1000) + expiresInSeconds;
 
-        const token = generateJWT({ username: user.id, exp });
+        const token = generateJWT({ user_id: user.id, exp });
 
         return HttpResponse.json(
             { message: "로그인 성공" },
             {
-            status: 200,
-            headers: {
-                "Set-Cookie": `jwt=${token}; Path=/; Max-Age=${expiresInSeconds};`,
-            },
+                status: 200,
+                headers: {
+                "Authorization": `Bearer ${token}`,
+                },
             }
         );
     }),
