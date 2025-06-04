@@ -4,12 +4,22 @@ import { useNavigate } from "react-router-dom";
 import useSWRMutation from "swr/mutation";
 
 async function stockFetcher(url: string, { arg }: { arg: { search: string } }) {
-    const res = await axios.post(url, arg);
+    const res = await axios.post(url, arg, {
+        headers: {
+        'Content-Type': 'application/json',
+        'ngrok-skip-browser-warning': '69420',
+        },
+    });
     return res.data;
 }
 
 async function newsFetcher(url: string, { arg }: { arg: { search: string; page_count: number } }) {
-    const res = await axios.post(url, arg);
+    const res = await axios.post(url, arg, {
+        headers: {
+        'Content-Type': 'application/json',
+        'ngrok-skip-browser-warning': '69420',
+        },
+    });
     return res.data;
 }
 

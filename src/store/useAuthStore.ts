@@ -32,7 +32,12 @@ export const useAuthStore = create<AuthStore>((set) => ({
 
     login: async (username, password) => {
         try {
-            await axios.post("/api/login", { username, password });
+            await axios.post("/api/login", { username, password }, {
+                    headers: {
+                    'Content-Type': 'application/json',
+                    'ngrok-skip-browser-warning': '69420',
+                    },
+                });
             set({ isLoggedIn: true, loginModalVisible: false });
             window.location.href = "/"; 
         } catch (err: any) {
@@ -68,7 +73,13 @@ export const useAuthStore = create<AuthStore>((set) => ({
 
     checkAuth: async () => {
         try {
-            const response = await axios.get("/api/check-auth", { withCredentials: true });
+            const response = await axios.get("/api/check-auth", { 
+                withCredentials: true,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'ngrok-skip-browser-warning': '69420',
+                }
+             });
             const user = response.data.user as UserInfo | undefined;
             
             set({
@@ -99,7 +110,12 @@ export const useAuthStore = create<AuthStore>((set) => ({
             ...rest,
             joined_at: new Date().toISOString().slice(0, 10),
         };
-        await axios.post("/sign_up", payload);
+        await axios.post("/sign_up", payload, {
+                    headers: {
+                    'Content-Type': 'application/json',
+                    'ngrok-skip-browser-warning': '69420',
+                    },
+                });
         alert("회원가입이 완료되었습니다.");
         set({ signUpModalVisible: false });
         } catch (err: any) {

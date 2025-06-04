@@ -1,8 +1,14 @@
 import useSWR from "swr";
 import type { StockSummary } from "../types/Stock";
+import axios from "axios";
 
-
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
+const fetcher = (url: string) =>
+    axios.get(url, {
+        headers: {
+        'Content-Type': 'application/json',
+        'ngrok-skip-browser-warning': '69420',
+        },
+    }).then(res => res.data);
 
 export function useStockSummary(keyword : string) {
     const { data, error, isLoading } = useSWR<StockSummary>(
