@@ -16,6 +16,58 @@ function convertDateFormat(dateStr: string): string {
     return `${yy}-${mm}-${dd}`;
 }
 
+function getMonthlyWeekNumber(date: Date): number {
+    const first = new Date(date.getFullYear(), date.getMonth(), 1);
+    const dayOfWeek = first.getDay(); // 0(일) ~ 6(토)
+    const day = date.getDate();
+    return Math.ceil((day + dayOfWeek) / 7);
+}
+
+// 봉별 데이터 그룹핑
+function getGroupedAverageData(data: Stock[], mode: 'daily' | 'weekly' | 'monthly'): (Stock & { name: string, value: number })[] {
+    if (mode === 'daily') {
+        return data.map(item => ({
+        ...item,
+        name: convertDateFormat(item.date),
+        value: item.close_price,
+        }));
+    }
+
+    const grouped: Record<string, Stock[]> = {};
+
+    data.forEach(item => {
+        const dateObj = new Date(item.date.replace(/\./g, '-'));
+        let key = '';
+
+        if (mode === 'weekly') {
+        const year = dateObj.getFullYear();
+        const week = getMonthlyWeekNumber(dateObj);
+        const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+        key = `${year}-${month}-${week}`;
+        console.log(key)
+        } else if (mode === 'monthly') {
+        const year = dateObj.getFullYear();
+        const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+        key = `${year}-${month}`;
+        }
+
+        if (!grouped[key]) grouped[key] = [];
+        grouped[key].push(item);
+    });
+
+    
+    return Object.entries(grouped).map(([key, items]) => {
+        const avgClose = items.reduce((sum, item) => sum + item.close_price, 0) / items.length;
+        const base = items[items.length - 1]; // 가장 마지막 데이터 사용
+
+        return {
+        ...base,
+        name: key,
+        value: Math.round(avgClose),
+        };
+    });
+}
+
 interface Props {
     data: Stock[];
 }
@@ -50,12 +102,8 @@ export default function StockChart({ data }: Props) {
         new Date(convertDateFormat(b.date)).getTime()
     );
 
-    // 툴팁에 표시할 값 계산한 value 필드 추가 (예: 시가+고가-종가-저가)/2
-    const processed = sortedData.map((item) => ({
-        ...item,
-        name: convertDateFormat(item.date),
-        value: item.close_price,
-    }));
+    const [mode, setMode] = useState<'daily' | 'weekly' | 'monthly'>('daily');
+    const processed = getGroupedAverageData(sortedData, mode);
 
     const [visibleStartIndex, setVisibleStartIndex] = useState<number>(0);
     const [visibleRange, setVisibleRange] = useState<number>(processed.length);
@@ -171,19 +219,35 @@ export default function StockChart({ data }: Props) {
 
     return (
         <div className = "relative" >
-            <div className="sticky top-0 z-10 flex justify-end gap-2 p-2 bg-transparent">
-                <button
-                    onClick={handleZoomIn}
-                    className="px-4 py-2 text-sm bg-yellow-400 hover:bg-yellow-300 rounded text-black"
-                >
+            <div className="sticky top-0 z-10 flex justify-between items-center p-2 bg-transparent">
+                <div className="flex gap-2">
+                <button onClick={() => {
+                    setVisibleRange(sortedData.length);
+                    setMode('daily');
+                }} className={`px-3 py-1 rounded ${mode === 'daily' ? 'bg-yellow-400' : 'bg-gray-200'} text-sm text-black`}>
+                    일봉
+                </button>
+                <button onClick={() => {
+                    setVisibleRange(sortedData.length);
+                    setMode('weekly');
+                }} className={`px-3 py-1 rounded ${mode === 'weekly' ? 'bg-yellow-400' : 'bg-gray-200'} text-sm text-black`}>
+                    주봉
+                </button>
+                <button onClick={() => {
+                    setVisibleRange(sortedData.length);
+                    setMode('monthly');
+                }} className={`px-3 py-1 rounded ${mode === 'monthly' ? 'bg-yellow-400' : 'bg-gray-200'} text-sm text-black`}>
+                    월봉
+                </button>
+                </div>
+                <div className="flex gap-2">
+                <button onClick={handleZoomIn} className="px-3 py-1 text-sm bg-yellow-400 hover:bg-yellow-300 rounded text-black">
                     확대
                 </button>
-                <button
-                    onClick={handleZoomOut}
-                    className="px-4 py-2 text-sm bg-gray-300 hover:bg-gray-200 rounded text-black"
-                >
+                <button onClick={handleZoomOut} className="px-3 py-1 text-sm bg-gray-300 hover:bg-gray-200 rounded text-black">
                     축소
                 </button>
+                </div>
             </div>
 
             <div
