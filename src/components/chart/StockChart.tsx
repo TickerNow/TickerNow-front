@@ -96,12 +96,15 @@ export default function StockChart({ data }: Props) {
         if (!isDragging.current) return;
         const diffX = e.clientX - dragStartX.current;
         const threshold = 20;
+        const maxStep = 10;
 
         if (Math.abs(diffX) > threshold) {
             const direction = diffX > 0 ? -1 : 1;
+            const step = Math.min(maxStep, Math.floor(Math.abs(diffX) / threshold));
+
             setVisibleStartIndex((prev) => {
                 const newStart = Math.min(
-                    Math.max(0, prev + direction),
+                    Math.max(0, prev + direction * step),
                     processed.length - visibleRange
                 );
                 return newStart;
@@ -113,10 +116,16 @@ export default function StockChart({ data }: Props) {
     const onWheel = (e: React.WheelEvent) => {
         if (e.shiftKey) {
             e.preventDefault();
+
             const direction = e.deltaY > 0 ? 1 : -1;
+
+            const threshold = 20; 
+            const maxStep = 10;
+            const step = Math.min(maxStep, Math.floor(Math.abs(e.deltaY) / threshold));
+
             setVisibleStartIndex((prev) => {
                 const newStart = Math.min(
-                    Math.max(0, prev + direction),
+                    Math.max(0, prev + direction * step),
                     processed.length - visibleRange
                 );
                 return newStart;
