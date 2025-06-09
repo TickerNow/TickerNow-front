@@ -8,7 +8,7 @@ import {
 } from "recharts";
 
 import type { Stock } from "../../types/Stock";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect  } from "react";
 
 function convertDateFormat(dateStr: string): string {
     const delimiter = dateStr.includes('.') ? '.' : '-';
@@ -94,6 +94,7 @@ function CustomTooltip({ active, payload }: any) {
     return null;
 }
 
+
 export default function StockChart({ data }: Props) {
     // 날짜 오름차순 정렬
     const sortedData = [...data].sort(
@@ -110,6 +111,11 @@ export default function StockChart({ data }: Props) {
     const maxZoomRange = 7;
     const isDragging = useRef<boolean>(false);
     const dragStartX = useRef<number>(0);
+
+    useEffect(() => {
+        setVisibleRange(processed.length); // 기본 값으로 초기화
+        setVisibleStartIndex(0); // 맨 앞에서 시작
+    }, [mode, processed.length]);
 
     const handleZoomIn = () => {
         const newRange = Math.max(maxZoomRange, Math.floor(visibleRange / 2));
@@ -222,19 +228,16 @@ export default function StockChart({ data }: Props) {
             <div className="sticky top-0 z-10 flex justify-between items-center p-2 bg-transparent">
                 <div className="flex gap-2">
                 <button onClick={() => {
-                    setVisibleRange(sortedData.length);
                     setMode('daily');
                 }} className={`px-3 py-1 rounded ${mode === 'daily' ? 'bg-yellow-400' : 'bg-gray-200'} text-sm text-black`}>
                     일봉
                 </button>
                 <button onClick={() => {
-                    setVisibleRange(sortedData.length);
                     setMode('weekly');
                 }} className={`px-3 py-1 rounded ${mode === 'weekly' ? 'bg-yellow-400' : 'bg-gray-200'} text-sm text-black`}>
                     주봉
                 </button>
                 <button onClick={() => {
-                    setVisibleRange(sortedData.length);
                     setMode('monthly');
                 }} className={`px-3 py-1 rounded ${mode === 'monthly' ? 'bg-yellow-400' : 'bg-gray-200'} text-sm text-black`}>
                     월봉
