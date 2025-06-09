@@ -12,12 +12,20 @@ const SignUpModal = () => {
         confirm: "",
     });
 
+    const [idChecked, setIdChecked] = useState<boolean>(false);
+    const [nicknameChecked, setNicknameChecked] = useState<boolean>(false);
+
     const hideSignUpModal = useAuthStore((s) => s.hideSignUpModal);
     const signUp = useAuthStore((s) => s.signUp); // 가상의 signUp 함수
+    const checkIdDuplicate = useAuthStore((s) => s.checkIdDuplicate); // 가정
+    const checkNicknameDuplicate = useAuthStore((s) => s.checkNicknameDuplicate); // 가정
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
         setForm((prev) => ({ ...prev, [name]: value }));
+
+        if (name === "id") setIdChecked(false);
+        if (name === "nickname") setNicknameChecked(false);
     };
 
     const handleSubmit = () => {
@@ -36,12 +44,47 @@ const SignUpModal = () => {
             alert("모든 항목을 입력해주세요.");
             return;
         }
+
+        if (!idChecked) {
+            alert("아이디 중복 확인을 해주세요.");
+            return;
+        }
+
+        if (!nicknameChecked) {
+            alert("닉네임 중복 확인을 해주세요.");
+            return;
+        }
+
         const userData = {
         ...form,
         joined_at: new Date().toISOString().slice(0, 10), // yyyy-mm-dd
         };
 
         signUp(userData);
+    };
+
+    const handleCheckId = async () => {
+        if (!form.id.trim()) {
+            alert("아이디를 입력해주세요.");
+            return;
+        }
+        const isAvailable  = await checkIdDuplicate(form.id.trim());
+        if (isAvailable) {
+            alert("사용 가능한 아이디입니다.");
+            setIdChecked(true);
+        }
+    };
+
+    const handleCheckNickname = async () => {
+        if (!form.nickname.trim()) {
+            alert("닉네임을 입력해주세요.");
+            return;
+        }
+        const isAvailable = await checkNicknameDuplicate(form.nickname.trim());
+        if (isAvailable) {
+            alert("사용 가능한 닉네임입니다.");
+            setNicknameChecked(true);
+        } 
     };
 
     return (
@@ -56,20 +99,36 @@ const SignUpModal = () => {
             <div className="border-b border-gray-600 mb-6 w-full" />
 
             <div>
-                <input
-                    name="id"
-                    placeholder="아이디"
-                    value={form.id}
-                    onChange={handleChange}
-                    className="bg-[#181A20] text-white placeholder-white/60 px-4 py-2 w-full mb-4 rounded-sm outline-none border border-gray-600"
-                />
-                <input
-                    name="nickname"
-                    placeholder="닉네임"
-                    value={form.nickname}
-                    onChange={handleChange}
-                    className="bg-[#181A20] text-white placeholder-white/60 px-4 py-2 w-full mb-4 rounded-sm outline-none border border-gray-600"
-                />
+                <div className="flex gap-2 mb-4">
+                    <input
+                        name="id"
+                        placeholder="아이디"
+                        value={form.id}
+                        onChange={handleChange}
+                        className="bg-[#181A20] text-white placeholder-white/60 px-4 py-2 flex-1 rounded-sm outline-none border border-gray-600"
+                    />
+                    <button
+                        onClick={handleCheckId}
+                        className="bg-[#FCD535] text-black font-bold py-1 px-1 text-sm rounded-sm hover:brightness-110 transition"
+                    >
+                        중복확인
+                    </button>
+                </div>
+                <div className="flex gap-2 mb-4">
+                    <input
+                        name="nickname"
+                        placeholder="닉네임"
+                        value={form.nickname}
+                        onChange={handleChange}
+                        className="bg-[#181A20] text-white placeholder-white/60 px-4 py-2 flex-1 rounded-sm outline-none border border-gray-600"
+                    />
+                    <button
+                        onClick={handleCheckNickname}
+                        className="bg-[#FCD535] text-black font-bold py-1 px-1 text-sm rounded-sm hover:brightness-110 transition"
+                    >
+                        중복확인
+                    </button>
+                </div>
                 <input
                     name="name"
                     placeholder="이름"

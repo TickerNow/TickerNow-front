@@ -184,6 +184,41 @@ export const handlers = [
         );
     }),
 
+    http.post("/sign_id_check", async ({ request }) => {
+        const { id } = (await request.json()) as { id: string };
+        const isDuplicate = mockUsers.some((user) => user.id === id);
+
+        if (isDuplicate) {
+        return HttpResponse.json(
+            { message: "중복된 아이디가 존재 합니다!" },
+            { status: 400 }
+        );
+        }
+
+        return HttpResponse.json(
+        { message: "해당 아이디는 사용 가능 합니다!" },
+        { status: 200 }
+        );
+    }),
+
+    // 닉네임 중복 확인 핸들러
+    http.post("/sign_nickname_check", async ({ request }) => {
+        const { nickname } = await request.json() as { nickname: string };
+        const isDuplicate = mockUsers.some((user) => user.nickname === nickname);
+
+        if (isDuplicate) {
+        return HttpResponse.json(
+            { message: "중복된 닉네임이 존재 합니다!" },
+            { status: 400 }
+        );
+        }
+
+        return HttpResponse.json(
+        { message: "해당 닉네임은 사용 가능 합니다!" },
+        { status: 200 }
+        );
+    }),
+
     http.post("/sign_up", async ({ request }) => {
         try {
         const data = (await request.json()) as SignUpFormData;

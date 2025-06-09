@@ -20,6 +20,9 @@ interface AuthStore {
     signUpModalVisible: boolean;
     showSignUpModal: () => void;
     hideSignUpModal: () => void;
+
+    checkIdDuplicate: (id: string) => Promise<boolean>;
+    checkNicknameDuplicate: (nickname: string) => Promise<boolean>;
     signUp: (userData: SignUpFormData) => Promise<void>;
 }
 
@@ -98,6 +101,56 @@ export const useAuthStore = create<AuthStore>((set) => ({
 
     showSignUpModal: () => set({ signUpModalVisible: true }),
     hideSignUpModal: () => set({ signUpModalVisible: false }),
+
+    checkIdDuplicate: async (id: string) => {
+        if (!id.trim()) {
+            return false;
+        }
+
+        try {
+            await axios.post(`${apiUrl}/sign_id_check`, { id }, {
+            headers: {
+                'Content-Type': 'application/json',
+                'ngrok-skip-browser-warning': '69420',
+            },
+            });
+
+            return true;
+
+        } catch (err: any) {
+            if (axios.isAxiosError(err) && err.response?.status === 400) {
+            alert("중복된 아이디가 존재합니다.");
+            } else {
+            alert("아이디 중복 확인 중 오류가 발생했습니다.");
+            }
+            return false;
+        }
+    },
+
+    checkNicknameDuplicate: async (nickname: string) => {
+        if (!nickname.trim()) {
+            return false;
+        }
+
+        try {
+            await axios.post(`${apiUrl}/sign_nickname_check`, { nickname }, {
+            headers: {
+                'Content-Type': 'application/json',
+                'ngrok-skip-browser-warning': '69420',
+            },
+            });
+
+            return true;
+
+        } catch (err: any) {
+            if (axios.isAxiosError(err) && err.response?.status === 400) {
+            alert("중복된 닉네임이 존재합니다.");
+            } else {
+            alert("닉네임 중복 확인 중 오류가 발생했습니다.");
+            }
+            return false;
+        }
+    },
 
     signUp: async (userData) => {
         try {
