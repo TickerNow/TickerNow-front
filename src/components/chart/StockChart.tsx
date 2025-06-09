@@ -168,23 +168,21 @@ export default function StockChart({ data }: Props) {
     };
 
     const onWheel = (e: React.WheelEvent) => {
-        if (e.shiftKey) {
-            e.preventDefault();
+        e.preventDefault();
 
-            const direction = e.deltaY > 0 ? 1 : -1;
+        const direction = e.deltaY > 0 ? 1 : -1;
 
-            const threshold = 20; 
-            const maxStep = 10;
-            const step = Math.min(maxStep, Math.floor(Math.abs(e.deltaY) / threshold));
+        const threshold = 20; 
+        const maxStep = 10;
+        const step = Math.min(maxStep, Math.floor(Math.abs(e.deltaY) / threshold));
 
-            setVisibleStartIndex((prev) => {
-                const newStart = Math.min(
-                    Math.max(0, prev + direction * step),
-                    processed.length - visibleRange
-                );
-                return newStart;
-            });
-        }
+        setVisibleStartIndex((prev) => {
+            const newStart = Math.min(
+                Math.max(0, prev + direction * step),
+                processed.length - visibleRange
+            );
+            return newStart;
+        });
     };
 
     const slicedData = processed.slice(
