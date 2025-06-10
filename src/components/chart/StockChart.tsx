@@ -149,8 +149,8 @@ export default function StockChart({ data }: Props) {
     const onMouseMove = (e: React.MouseEvent) => {
         if (!isDragging.current) return;
         const diffX = e.clientX - dragStartX.current;
-        const threshold = 20;
-        const maxStep = 10;
+        const threshold = 3;
+        const maxStep = 30;
 
         if (Math.abs(diffX) > threshold) {
             const direction = diffX > 0 ? -1 : 1;
@@ -172,8 +172,8 @@ export default function StockChart({ data }: Props) {
 
         const direction = e.deltaY > 0 ? 1 : -1;
 
-        const threshold = 20; 
-        const maxStep = 10;
+        const threshold = 3;
+        const maxStep = 30;
         const step = Math.min(maxStep, Math.floor(Math.abs(e.deltaY) / threshold));
 
         setVisibleStartIndex((prev) => {
