@@ -15,6 +15,7 @@ import SignUpModal from "../components/Join/JoinModal";
 import NavBar from "../components/Navbar/Navbar";
 import ChatInput from "../components/ChatInput/ChatInput";
 import { useAiChat } from "../utils/useAiChat";
+import StockTableWithPagination from "../components/Table/StockTableWithPagination";
 
 export default function Home() {
     
@@ -35,6 +36,8 @@ export default function Home() {
     const userId = user?.user_id;
 
     const { trigger, isMutating } = useAiChat();
+
+    const [selectedTab, setSelectedTab] = useState<'price' | 'news'>('price');
     
     const onSearch = async () => {
         if (!keyword.trim()) return;
@@ -129,7 +132,7 @@ export default function Home() {
                     : "opacity-0 translate-y-4 pointer-events-none"
                 } bg-[#111111] p-5 text-white rounded-sm relative h-[80vh]`}
             >
-                <div className="p-1">
+                <div className="absolute inset-0 overflow-y-auto p-1">
                     {/* 결과 리스트 출력 */}
                     {stock && stock.length > 0 && (
                         <div className={`w-full flex ${chatVisible ? "flex-row gap-6" : "flex-col"}`}>
@@ -179,6 +182,44 @@ export default function Home() {
                     {searchTerm && !isLoadingStock && stock && stock.length === 0 && (
                         <p>검색 결과가 없습니다.</p>
                     )}
+
+                    <div className="mt-4">
+                        <div className="flex border-b border-gray-500 mb-2">
+                            <button
+                                className={`px-4 py-2 text-sm font-semibold ${
+                                    selectedTab === 'price' ? 'border-b-2 border-yellow-400 text-yellow-400' : 'text-gray-400'
+                                }`}
+                                onClick={() => setSelectedTab('price')}
+                            >
+                                가격
+                            </button>
+                            <button
+                                className={`px-4 py-2 text-sm font-semibold ${
+                                    selectedTab === 'news' ? 'border-b-2 border-yellow-400 text-yellow-400' : 'text-gray-400'
+                                }`}
+                                onClick={() => setSelectedTab('news')}
+                            >
+                                뉴스
+                            </button>
+                        </div>
+
+                        {/* 탭에 따라 다른 내용 렌더링 */}
+                        {selectedTab === 'price' && (
+                            <div className="mt-4">
+                                {
+                                    stock && stock.length > 0 && (
+                                        <StockTableWithPagination data = {stock}/>
+                                    )
+                                }
+                            </div>
+                        )}
+
+                        {selectedTab === 'news' && (
+                            null
+                        )}
+
+                        <div className="h-[100px]"></div>
+                    </div>
                 </div>
             </div>
 

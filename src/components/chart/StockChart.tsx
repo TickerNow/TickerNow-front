@@ -12,7 +12,16 @@ import { useRef, useState, useEffect  } from "react";
 
 function convertDateFormat(dateStr: string): string {
     const delimiter = dateStr.includes('.') ? '.' : '-';
-    const [yy, mm, dd] = dateStr.split(delimiter);
+    let [yy, mm, dd] = dateStr.split(delimiter);
+
+    // 2자리 연도 처리
+    if (yy.length === 2) {
+        const num = parseInt(yy, 10);
+        const currentYear = new Date().getFullYear() % 100; // 예: 2025 → 25
+        const century = num > currentYear ? '19' : '20';
+        yy = century + yy;
+    }
+
     return `${yy}-${mm}-${dd}`;
 }
 
@@ -36,7 +45,7 @@ function getGroupedAverageData(data: Stock[], mode: 'daily' | 'weekly' | 'monthl
     const grouped: Record<string, Stock[]> = {};
 
     data.forEach(item => {
-        const dateObj = new Date(item.date.replace(/\./g, '-'));
+        const dateObj = new Date(convertDateFormat(item.date).replace(/\./g, '-'));
         let key = '';
 
         if (mode === 'weekly') {
