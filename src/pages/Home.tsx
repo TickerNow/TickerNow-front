@@ -126,109 +126,111 @@ export default function Home() {
             <ToastContainer position="bottom-center" autoClose={3000} />
 
             {/* 결과 영역 */}
-            <div
-                className={`w-full max-w-7xl transition-all duration-700 ease-out transform ${
-                stock
-                    ? "opacity-100 translate-y-0 mt-6 mb-6 flex-1"
-                    : "opacity-0 translate-y-4 pointer-events-none"
-                } bg-[#111111] p-5 text-white rounded-sm relative h-[80vh]`}
-            >
-                <div className="absolute inset-0 overflow-y-auto p-1">
-                    {/* 결과 리스트 출력 */}
-                    {stock && stock.length > 0 && (
-                        <div className={`w-full flex ${chatVisible ? "flex-row gap-6" : "flex-col"}`}>
-                            <div className={chatVisible ? "w-2/3" : "w-full"}>
-                                <StockChart data={stock} />
+            {stock && stock.length > 0 && stockNews && stockNews.length > 0 && (
+                <div
+                    className={`w-full max-w-7xl transition-all duration-700 ease-out transform ${
+                    stock
+                        ? "opacity-100 translate-y-0 mt-6 mb-6 flex-1"
+                        : "opacity-0 translate-y-4 pointer-events-none"
+                    } bg-[#111111] p-5 text-white rounded-sm relative h-[80vh]`}
+                >
+                    <div className="absolute inset-0 overflow-y-auto p-1">
+                        {/* 결과 리스트 출력 */}
+                        {stock && stock.length > 0 && (
+                            <div className={`w-full flex ${chatVisible ? "flex-row gap-6" : "flex-col"}`}>
+                                <div className={chatVisible ? "w-2/3" : "w-full"}>
+                                    <StockChart data={stock} />
+                                </div>
+
+                                {chatVisible && (
+                                    <div className="w-1/3 border-l border-[#333] pl-4 flex flex-col max-h-[650px]">
+                                        <h2 className="text-lg font-bold mb-2">AI 응답</h2>
+                                        <div className="text-sm text-gray-300 flex-grow overflow-auto mb-2 space-y-2">
+                                            {(userQuestions.length === 0 && aiResponses.length === 0) ? (
+                                            <p>입력한 질문에 대한 AI의 응답이 여기에 표시됩니다.</p>
+                                            ) : (
+                                            userQuestions.map((question, i) => (
+                                                <div key={i} className="flex flex-col space-y-1">
+                                                <p className="self-end bg-gray-800 text-white p-2 rounded-lg max-w-[70%] whitespace-pre-wrap">
+                                                    {question}
+                                                </p>
+                                                {aiResponses[i] && (
+                                                    <p className="bg-gray-700 p-2 rounded-lg max-w-[80%] whitespace-pre-wrap">
+                                                    {aiResponses[i]}
+                                                    </p>
+                                                )}
+                                                </div>
+                                            ))
+                                            )}
+
+                                            {isMutating && (
+                                            <p className="text-sm text-gray-400 animate-pulse">AI 응답 생성 중...</p>
+                                            )}
+                                        </div>
+
+                                        {/* 여기 채팅 입력창을 이동 */}
+                                        <ChatInput
+                                            value={chatInput}
+                                            onChange={(e) => setChatInput(e.target.value)}
+                                            onSubmit={handleSendChat}
+                                            wrapperClassName="flex border border-[#FCD535] rounded-sm"
+                                            />
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
+                        {/* 검색했지만 결과가 없을 때 */}
+                        {searchTerm && !isLoadingStock && stock && stock.length === 0 && (
+                            <p>검색 결과가 없습니다.</p>
+                        )}
+
+                        <div className="mt-4">
+                            <div className="flex border-b border-gray-500 mb-2">
+                                <button
+                                    className={`px-4 py-2 text-sm font-semibold ${
+                                        selectedTab === 'price' ? 'border-b-2 border-yellow-400 text-yellow-400' : 'text-gray-400'
+                                    }`}
+                                    onClick={() => setSelectedTab('price')}
+                                >
+                                    가격
+                                </button>
+                                <button
+                                    className={`px-4 py-2 text-sm font-semibold ${
+                                        selectedTab === 'news' ? 'border-b-2 border-yellow-400 text-yellow-400' : 'text-gray-400'
+                                    }`}
+                                    onClick={() => setSelectedTab('news')}
+                                >
+                                    뉴스
+                                </button>
                             </div>
 
-                            {chatVisible && (
-                                <div className="w-1/3 border-l border-[#333] pl-4 flex flex-col max-h-[650px]">
-                                    <h2 className="text-lg font-bold mb-2">AI 응답</h2>
-                                    <div className="text-sm text-gray-300 flex-grow overflow-auto mb-2 space-y-2">
-                                        {(userQuestions.length === 0 && aiResponses.length === 0) ? (
-                                        <p>입력한 질문에 대한 AI의 응답이 여기에 표시됩니다.</p>
-                                        ) : (
-                                        userQuestions.map((question, i) => (
-                                            <div key={i} className="flex flex-col space-y-1">
-                                            <p className="self-end bg-gray-800 text-white p-2 rounded-lg max-w-[70%] whitespace-pre-wrap">
-                                                {question}
-                                            </p>
-                                            {aiResponses[i] && (
-                                                <p className="bg-gray-700 p-2 rounded-lg max-w-[80%] whitespace-pre-wrap">
-                                                {aiResponses[i]}
-                                                </p>
-                                            )}
-                                            </div>
-                                        ))
-                                        )}
-
-                                        {isMutating && (
-                                        <p className="text-sm text-gray-400 animate-pulse">AI 응답 생성 중...</p>
-                                        )}
-                                    </div>
-
-                                    {/* 여기 채팅 입력창을 이동 */}
-                                    <ChatInput
-                                        value={chatInput}
-                                        onChange={(e) => setChatInput(e.target.value)}
-                                        onSubmit={handleSendChat}
-                                        wrapperClassName="flex border border-[#FCD535] rounded-sm"
-                                        />
+                            {/* 탭에 따라 다른 내용 렌더링 */}
+                            {selectedTab === 'price' && (
+                                <div className="mt-4">
+                                    {
+                                        stock && stock.length > 0 && (
+                                            <StockTableWithPagination data = {stock}/>
+                                        )
+                                    }
                                 </div>
                             )}
+
+                            {selectedTab === 'news' && (
+                                <div className="mt-4">
+                                    {
+                                        stockNews && stockNews.length > 0 && (
+                                            <StockNewsList news={stockNews} />
+                                        )
+                                    }
+                                </div>
+                            )}
+
+                            <div className="h-[100px]"></div>
                         </div>
-                    )}
-
-                    {/* 검색했지만 결과가 없을 때 */}
-                    {searchTerm && !isLoadingStock && stock && stock.length === 0 && (
-                        <p>검색 결과가 없습니다.</p>
-                    )}
-
-                    <div className="mt-4">
-                        <div className="flex border-b border-gray-500 mb-2">
-                            <button
-                                className={`px-4 py-2 text-sm font-semibold ${
-                                    selectedTab === 'price' ? 'border-b-2 border-yellow-400 text-yellow-400' : 'text-gray-400'
-                                }`}
-                                onClick={() => setSelectedTab('price')}
-                            >
-                                가격
-                            </button>
-                            <button
-                                className={`px-4 py-2 text-sm font-semibold ${
-                                    selectedTab === 'news' ? 'border-b-2 border-yellow-400 text-yellow-400' : 'text-gray-400'
-                                }`}
-                                onClick={() => setSelectedTab('news')}
-                            >
-                                뉴스
-                            </button>
-                        </div>
-
-                        {/* 탭에 따라 다른 내용 렌더링 */}
-                        {selectedTab === 'price' && (
-                            <div className="mt-4">
-                                {
-                                    stock && stock.length > 0 && (
-                                        <StockTableWithPagination data = {stock}/>
-                                    )
-                                }
-                            </div>
-                        )}
-
-                        {selectedTab === 'news' && (
-                            <div className="mt-4">
-                                {
-                                    stockNews && stockNews.length > 0 && (
-                                        <StockNewsList news={stockNews} />
-                                    )
-                                }
-                            </div>
-                        )}
-
-                        <div className="h-[100px]"></div>
                     </div>
                 </div>
-            </div>
+                )}
 
             {/* ChatBox */}
             {
