@@ -3,10 +3,12 @@ import type { News } from "../types/News";
 import type { Stock } from "../types/Stock";
 import type { StockSummary } from "../types/Stock";
 import autoever from './mock_data/hyundai_autoever.json';
+import autoeverNews from './mock_data/hyundai_autoever_news.json';
 import { mockUsers } from './mock_data/mockUser';
 import type { SignUpFormData } from "../types/SignUp";
 import type { LoginFormData } from "../types/Login";
 import { generateJWT, decodeJWT } from "../utils/simpleJwt";
+import type { StockNews } from "../types/StockNews";
 
 const JWT_SECRET = "y7P4vZr9kLxT8mNq3sJfUdB2HwEeXoCg";
 const JWT_EXPIRES_IN = "1h";
@@ -79,6 +81,7 @@ const newsData: News[] = [
 ];
 
 const stockData: Stock[]  = autoever;
+const stockNewsData: StockNews[] = autoeverNews;
 
 const stockSummary: StockSummary = {
     summary: "2025년 5월 21일 기준, 현대오토에버의 주가는 152,000원이며, 최근 1분기 실적은 매출 8,274억 원, 영업이익 710억 원으로 전년 동기 대비 두 자릿수 성장률을 기록했습니다. 스마트 모빌리티 소프트웨어와 차량용 OS 개발 중심으로 사업 포트폴리오를 확대 중이며, 자율주행 및 커넥티드카 관련 기술 확보를 통해 미래차 전환에 적극 대응하고 있습니다. 특히 현대차그룹의 소프트웨어 중심 차량(SDV) 전략에 있어 핵심 계열사로 자리매김하고 있으며, 글로벌 모빌리티 플랫폼 공급 확대로 수익성이 개선되고 있습니다. 최근 외국인 수급은 중립적이나, 국내 기관의 순매수세가 지속되고 있으며, 애널리스트들은 평균 목표주가를 184,000원으로 제시하고 있어 약 21%의 상승 여력을 전망하고 있습니다. 중장기적으로는 차량 전자화 및 소프트웨어 수요 확대에 따른 성장성이 주목받고 있습니다."
@@ -129,7 +132,11 @@ export const handlers = [
     }),
 
     http.post("/DB_stock_search", ({request})=> {
-        return HttpResponse.json(stockData);
+
+        return HttpResponse.json({
+            stock_data: stockData,
+            news_data: stockNewsData,
+        });
     }),
 
     http.get("/stock-summary-ai", () => {

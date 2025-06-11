@@ -16,6 +16,7 @@ import NavBar from "../components/Navbar/Navbar";
 import ChatInput from "../components/ChatInput/ChatInput";
 import { useAiChat } from "../utils/useAiChat";
 import StockTableWithPagination from "../components/Table/StockTableWithPagination";
+import StockNewsList from "../components/News/StockNewsList";
 
 export default function Home() {
     
@@ -24,7 +25,7 @@ export default function Home() {
     
     const [keyword, setKeyword] = useState<string>("");
     const [searchTerm, setSearchTerm] = useState<string>("");
-    const { stock, isLoadingStock, isErrorStock } = useStockItem(searchTerm); // 검색 시에만 호출
+    const { stock, stockNews, isLoadingStock, isErrorStock } = useStockItem(searchTerm); // 검색 시에만 호출
     
     const [chatVisible, setChatVisible] = useState<boolean>(false);
     const [chatInput, setChatInput] = useState<string>("");
@@ -215,7 +216,13 @@ export default function Home() {
                         )}
 
                         {selectedTab === 'news' && (
-                            null
+                            <div className="mt-4">
+                                {
+                                    stockNews && stockNews.length > 0 && (
+                                        <StockNewsList news={stockNews} />
+                                    )
+                                }
+                            </div>
                         )}
 
                         <div className="h-[100px]"></div>
