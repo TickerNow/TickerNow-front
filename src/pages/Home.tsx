@@ -138,7 +138,7 @@ export default function Home() {
                                 </div>
 
                                 {chatVisible && (
-                                    <div className="w-1/3 border-l border-[#333] pl-4 flex flex-col max-h-[650px]">
+                                    <div className="w-1/3 border-l border-[#333] pl-4 flex flex-col max-h-[850px]">
                                         <h2 className="text-lg font-bold mb-2">AI 응답</h2>
                                         <div className="text-sm text-gray-300 flex-grow overflow-auto mb-2 space-y-2">
                                             {(userQuestions.length === 0 && aiResponses.length === 0) ? (
