@@ -114,11 +114,6 @@ export default function Home() {
                 <Button onClick={onSearch} disabled={isLoadingStock}>
                 {isLoadingStock ? "검색중..." : "검색"}
                 </Button>
-
-                {/* 검색 후만 다운로드 버튼 표시 */}
-                {stock && stock.length > 0 && (
-                <Button className="transition-opacity duration-500">다운로드</Button>
-                )}
             </div>
 
             {!searchTerm && !isLoading && !isError && <NewsList news={news || []} />}
