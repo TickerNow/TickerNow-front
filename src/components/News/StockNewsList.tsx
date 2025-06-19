@@ -56,43 +56,74 @@ export default function StockNewsList({ news }: { news: StockNews[] | undefined 
 
             {/* 페이지네이션 */}
             {totalPages > 1 && (
-                <div className="flex justify-center mt-4 space-x-3">
-                    <button
-                        className="px-3 py-1 bg-gray-700 rounded disabled:opacity-50"
-                        onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
-                        disabled={currentPage === 1}
-                    >
-                        이전
-                    </button>
-                    {/* 페이지 번호 최대 10개씩 */}
-                    {(() => {
-                        const maxVisiblePages = 10;
-                        const currentGroup = Math.floor((currentPage - 1) / maxVisiblePages);
-                        const start = currentGroup * maxVisiblePages + 1;
-                        const end = Math.min(start + maxVisiblePages - 1, totalPages);
+            <div className="flex justify-center mt-4 space-x-2">
+                {/* ◀ 그룹 이전 이동 */}
+                <button
+                className="px-3 py-1 bg-gray-700 rounded disabled:opacity-50"
+                onClick={() =>
+                    setCurrentPage((prev) =>
+                    Math.max(1, Math.floor((prev - 1) / 10) * 10)
+                    )
+                }
+                disabled={currentPage <= 10}
+                >
+                ◀
+                </button>
 
-                        return Array.from({ length: end - start + 1 }, (_, i) => {
-                            const pageNumber = start + i;
-                            return (
-                                <button
-                                    key={pageNumber}
-                                    className={`px-3 py-1 rounded ${currentPage === pageNumber ? "bg-blue-600" : "bg-gray-700"}`}
-                                    onClick={() => setCurrentPage(pageNumber)}
-                                >
-                                    {pageNumber}
-                                </button>
-                            );
-                        });
-                    })()}
+                {/* 이전 버튼 */}
+                <button
+                className="px-3 py-1 bg-gray-700 rounded disabled:opacity-50"
+                onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+                disabled={currentPage === 1}
+                >
+                이전
+                </button>
 
+                {/* 페이지 번호 그룹 */}
+                {(() => {
+                const maxVisiblePages = 10;
+                const currentGroup = Math.floor((currentPage - 1) / maxVisiblePages);
+                const start = currentGroup * maxVisiblePages + 1;
+                const end = Math.min(start + maxVisiblePages - 1, totalPages);
+
+                return Array.from({ length: end - start + 1 }, (_, i) => {
+                    const pageNumber = start + i;
+                    return (
                     <button
-                        className="px-3 py-1 bg-gray-700 rounded disabled:opacity-50"
-                        onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
-                        disabled={currentPage === totalPages}
+                        key={pageNumber}
+                        className={`px-3 py-1 rounded ${
+                        currentPage === pageNumber ? "bg-blue-600" : "bg-gray-700"
+                        }`}
+                        onClick={() => setCurrentPage(pageNumber)}
                     >
-                        다음
+                        {pageNumber}
                     </button>
-                </div>
+                    );
+                });
+                })()}
+
+                {/* 다음 버튼 */}
+                <button
+                className="px-3 py-1 bg-gray-700 rounded disabled:opacity-50"
+                onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+                disabled={currentPage === totalPages}
+                >
+                다음
+                </button>
+
+                {/* ▶ 그룹 다음 이동 */}
+                <button
+                className="px-3 py-1 bg-gray-700 rounded disabled:opacity-50"
+                onClick={() =>
+                    setCurrentPage((prev) =>
+                    Math.min(totalPages, Math.floor((prev - 1) / 10 + 1) * 10 + 1)
+                    )
+                }
+                disabled={currentPage > Math.floor((totalPages - 1) / 10) * 10}
+                >
+                ▶
+                </button>
+            </div>
             )}
         </div>
     );
