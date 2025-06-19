@@ -197,6 +197,12 @@ export default function StockChart({ data }: Props) {
         }
     };
 
+    const calculateYAxisWidth = (data: number[]): number => {
+        const max = Math.max(...data);
+        const digits = max.toLocaleString().length;
+        return digits * 8 + 10; // 자릿수 * 글자 폭 + 여유
+    };
+
     const slicedData = processed.slice(
         visibleStartIndex,
         visibleStartIndex + visibleRange
@@ -288,7 +294,7 @@ export default function StockChart({ data }: Props) {
                             </defs>
                             <XAxis dataKey="name" />
                             <YAxis
-                                width={70}
+                                width={calculateYAxisWidth(slicedData.map(d => d.trading_volume))}
                                 domain={[minY, maxY]}
                                 ticks={ticks}
                                 tickFormatter={(value) => value.toLocaleString()}
@@ -311,7 +317,7 @@ export default function StockChart({ data }: Props) {
                             <BarChart data={slicedData} margin={{ top: 0, right: 30, left: 0, bottom: 0 }}>
                             <XAxis dataKey="name" />
                             <YAxis
-                                width={70}
+                                width={calculateYAxisWidth(slicedData.map(d => d.trading_volume))}
                                 tickFormatter={(value) => value.toLocaleString()}
                                 domain={[0, 'dataMax']}
                             />
