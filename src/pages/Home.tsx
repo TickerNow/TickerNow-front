@@ -49,15 +49,17 @@ export default function Home() {
         return <StockChart data={stock} />;
     }, [stock]);
     
-    const onSearch = async () => {
-        if (!keyword.trim()) return;
+    const onSearch = async (selected?: string) => {
+        const value = selected ?? keyword;
 
-        if(!isLoggedIn){
+        if (!value.trim()) return;
+
+        if (!isLoggedIn) {
             showLoginModal();
             return;
         }
 
-        setSearchTerm(keyword); // 애니메이션 트리거
+        setSearchTerm(value); // 애니메이션 트리거
         setChatVisible(false);
         setChatInput("");
         setUserQuestions([]);
@@ -147,7 +149,7 @@ export default function Home() {
                         if (e.key === "Enter") onSearch();
                     }}
                 />
-                <Button onClick={onSearch} disabled={isLoadingStock}>
+                <Button onClick={() => onSearch()} disabled={isLoadingStock}>
                     {isLoadingStock ? "검색중..." : "검색"}
                 </Button>
 
@@ -159,7 +161,7 @@ export default function Home() {
                         onSelect={(selected) => {
                             setKeyword(selected);
                             setIsSuggestionsVisible(false);
-                            onSearch();
+                            onSearch(selected);
                         }}
                     />
                 )}
