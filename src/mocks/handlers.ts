@@ -2,6 +2,7 @@ import { http, HttpResponse } from "msw";
 import type { News } from "../types/News";
 import type { Stock } from "../types/Stock";
 import type { StockSummary } from "../types/Stock";
+import type { RelatedKeyword } from "../types/RelKeyword";
 import autoever from './mock_data/hyundai_autoever.json';
 import autoeverNews from './mock_data/hyundai_autoever_news.json';
 import { mockUsers } from './mock_data/mockUser';
@@ -335,5 +336,56 @@ export const handlers = [
     } catch (error) {
         return HttpResponse.json({ error: (error as Error).message }, { status: 500 });
     }
+    }),
+
+    http.post("/realtime_search", async ({ request }) => {
+        const body = (await request.json()) as { search?: string };
+        const search = body.search?.replace(/'/g, "") ?? "";
+
+        // 간단한 mock: 입력값에 '삼'이 들어가면 '삼성전자', '삼성바이오로직스' 반환
+        let relatedKeywords : RelatedKeyword[] = [];
+
+        if (search.includes("삼")) {
+            relatedKeywords = [
+                { name: "삼성전자" },
+                { name: "삼성바이오로직스" },
+                { name: "삼성SDI" },
+                { name: "삼성전기" },
+                { name: "삼성화재" },
+                { name: "삼성중공업" },
+                { name: "삼성물산" },
+                { name: "삼성증권" },
+                { name: "삼성SDS" },
+                { name: "삼성카드" },
+                { name: "삼성생명" },
+                { name: "삼성에스디에스" }, // 삼성SDS 다른 표기
+                { name: "삼성서울병원" },
+                { name: "삼성출판사" },
+                { name: "삼성전기" },  // 중복 있지만 주요 기업
+                { name: "삼성테크윈" },
+                { name: "삼성중공업" }, // 중복있음
+                { name: "삼성SDI우" },
+                { name: "삼성전기우" },
+                { name: "삼성바이오에피스" },
+            ];
+        } else if (search.includes("카")) {
+            relatedKeywords = [
+                { name: "카카오" },
+                { name: "카카오페이" },
+            ];
+        } else if (search.includes("sk") || search.toLowerCase().includes("sk")) {
+            relatedKeywords = [
+                { name: "SK하이닉스" },
+                { name: "SK이노베이션" },
+                { name: "SK텔레콤" },
+            ];
+        } else if (search.includes("하이")) {
+            relatedKeywords = [
+                { name: "SK하이닉스" },
+                { name: "하이브" },
+            ];
+        }
+
+        return HttpResponse.json(relatedKeywords);
     }),
 ];

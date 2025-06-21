@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import Button from "../components/button/Button";
 import { useLatestNews } from "../utils/useLatestNews";
 import NewsList from "../components/News/NewsList";
@@ -17,6 +17,8 @@ import ChatInput from "../components/ChatInput/ChatInput";
 import { useAiChat } from "../utils/useAiChat";
 import StockTableWithPagination from "../components/Table/StockTableWithPagination";
 import StockNewsList from "../components/News/StockNewsList";
+import KeywordSuggestions from "../components/Search/KeywordSuggestion";
+
 
 export default function Home() {
     
@@ -24,6 +26,9 @@ export default function Home() {
     const { news, isLoading, isError } = useLatestNews();
     
     const [keyword, setKeyword] = useState<string>("");
+    const [isSuggestionsVisible, setIsSuggestionsVisible] = useState<boolean>(false);
+    const wrapperRef = useRef<HTMLDivElement>(null);
+
     const [searchTerm, setSearchTerm] = useState<string>("");
     const { stock, stockNews, isLoadingStock, isErrorStock } = useStockItem(searchTerm); // 검색 시에만 호출
     
@@ -39,6 +44,10 @@ export default function Home() {
     const { trigger, isMutating } = useAiChat();
 
     const [selectedTab, setSelectedTab] = useState<'price' | 'news'>('price');
+
+    const memoizedStockChart = useMemo(() => {
+        return <StockChart data={stock} />;
+    }, [stock]);
     
     const onSearch = async () => {
         if (!keyword.trim()) return;
@@ -81,6 +90,31 @@ export default function Home() {
         }
     }, [isErrorStock]);
 
+    useEffect(() => {
+        function handleClickOutside(event: MouseEvent) {
+            if (
+                wrapperRef.current &&
+                !wrapperRef.current.contains(event.target as Node)
+            ) {
+                setIsSuggestionsVisible(false);
+            }
+        }
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
+
+    const handleInputFocus = () => {
+        setIsSuggestionsVisible(true);
+    };
+
+    // 검색창 입력 변화 감지 시 연관검색어 보이도록
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setKeyword(e.target.value);
+        setIsSuggestionsVisible(true);
+    };
+
     return (
         <div className="w-full min-h-screen bg-[#181A20] flex flex-col items-center px-0 relative">
             {/* 네비게이션 바 */}
@@ -97,23 +131,38 @@ export default function Home() {
 
             {/* 검색 영역 */}
             <div
+                ref={wrapperRef}
                 className={`flex w-full max-w-4xl transition-all duration-700 ease-in-out gap-4 ${
                 searchTerm  ? "mt-5 max-w-7xl justify-start" : "justify-center"
                 }`}
             >
                 
                 <input
-                className="flex-1 px-4 py-2 rounded-sm bg-[#f0f0f0] text-black"
-                placeholder="주식종목을 입력하면 시장 흐름을 분석합니다."
-                value={keyword}
-                onChange={(e) => setKeyword(e.target.value)}
-                onKeyDown={(e) => {
-                    if (e.key === "Enter") onSearch();
-                }}
+                    className="flex-1 px-4 py-2 rounded-sm bg-[#f0f0f0] text-black"
+                    placeholder="주식종목을 입력하면 시장 흐름을 분석합니다."
+                    value={keyword}
+                    onChange={handleInputChange}
+                    onFocus={handleInputFocus}
+                    onKeyDown={(e) => {
+                        if (e.key === "Enter") onSearch();
+                    }}
                 />
                 <Button onClick={onSearch} disabled={isLoadingStock}>
-                {isLoadingStock ? "검색중..." : "검색"}
+                    {isLoadingStock ? "검색중..." : "검색"}
                 </Button>
+
+                {/* 연관검색어 컴포넌트 추가 */}
+                {isSuggestionsVisible && (
+                    <KeywordSuggestions
+                        keyword={keyword}
+                        searchTerm={searchTerm}
+                        onSelect={(selected) => {
+                            setKeyword(selected);
+                            setIsSuggestionsVisible(false);
+                            onSearch();
+                        }}
+                    />
+                )}
             </div>
 
             {!searchTerm && !isLoading && !isError && <NewsList news={news || []} />}
@@ -134,7 +183,7 @@ export default function Home() {
                         {stock && stock.length > 0 && (
                             <div className={`w-full flex ${chatVisible ? "flex-row gap-6" : "flex-col"}`}>
                                 <div className={chatVisible ? "w-2/3" : "w-full"}>
-                                    <StockChart data={stock} />
+                                    {memoizedStockChart}
                                 </div>
 
                                 {chatVisible && (
