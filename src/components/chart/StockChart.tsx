@@ -27,13 +27,6 @@ function convertDateFormat(dateStr: string): string {
     return `${yy}-${mm}-${dd}`;
 }
 
-function getMonthlyWeekNumber(date: Date): number {
-    const first = new Date(date.getFullYear(), date.getMonth(), 1);
-    const dayOfWeek = first.getDay(); // 0(일) ~ 6(토)
-    const day = date.getDate();
-    return Math.ceil((day + dayOfWeek) / 7);
-}
-
 // 봉별 데이터 그룹핑
 function getGroupedAverageData(data: Stock[], mode: 'daily' | 'weekly' | 'monthly'): (Stock & { name: string, value: number })[] {
     if (mode === 'daily') {
@@ -51,10 +44,17 @@ function getGroupedAverageData(data: Stock[], mode: 'daily' | 'weekly' | 'monthl
         let key = '';
 
         if (mode === 'weekly') {
-        const year = dateObj.getFullYear();
-        const week = getMonthlyWeekNumber(dateObj);
-        const month = String(dateObj.getMonth() + 1).padStart(2, '0');
-        key = `${year}-${month}-${week}`;
+            // 해당 날짜의 월요일을 기준으로 key 생성
+            const monday = new Date(dateObj);
+            const day = dateObj.getDay(); // 0(일) ~ 6(토)
+            const diffToMonday = (day === 0 ? -6 : 1) - day;
+            monday.setDate(dateObj.getDate() + diffToMonday);
+
+            const year = monday.getFullYear();
+            const month = String(monday.getMonth() + 1).padStart(2, '0');
+            const date = String(monday.getDate()).padStart(2, '0');
+
+            key = `${year}-${month}-${date}`; // 예: 2024-06-17
         } else if (mode === 'monthly') {
         const year = dateObj.getFullYear();
         const month = String(dateObj.getMonth() + 1).padStart(2, '0');
@@ -92,7 +92,7 @@ function CustomTooltip({ active, payload }: any) {
         return (
         <div className="bg-[#767676] rounded-sm p-2 text-sm">
             <div>
-            <strong>{convertDateFormat(stock.date)}</strong>
+            <strong>{stock.name}</strong>
             </div>
             <div>시가: {stock.open_price.toLocaleString()}</div>
             <div>고가: {stock.high_price.toLocaleString()}</div>
@@ -114,7 +114,7 @@ function CustomTradingVolumeTooltip({ active, payload }: any) {
         return (
         <div className="bg-[#767676] rounded-sm p-2 text-sm">
             <div>
-            <strong>{convertDateFormat(stock.date)}</strong>
+            <strong>{stock.name}</strong>
             </div>
             <div>거래량: {stock.trading_volume.toLocaleString()}</div>
         </div>
