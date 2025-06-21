@@ -10,6 +10,8 @@ interface Props {
     onSelect: (selected: string) => void;
 }
 
+const apiUrl = import.meta.env.VITE_API_BASE_URL;
+
 export default function KeywordSuggestions({ keyword, searchTerm, onSelect }: Props) {
     const [suggestions, setSuggestions] = useState<RelatedKeyword[]>([]);
 
@@ -21,7 +23,7 @@ export default function KeywordSuggestions({ keyword, searchTerm, onSelect }: Pr
             }
 
             try {
-                const res = await fetch("/realtime_search", {
+                const res = await fetch(`${apiUrl}/realtime_search`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
