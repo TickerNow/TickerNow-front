@@ -106,6 +106,24 @@ function CustomTooltip({ active, payload }: any) {
     return null;
 }
 
+// 거래량 툴팁 컴포넌트
+function CustomTradingVolumeTooltip({ active, payload }: any) {
+    if (active && payload && payload.length) {
+        const stock: Stock = payload[0].payload;
+
+        return (
+        <div className="bg-[#767676] rounded-sm p-2 text-sm">
+            <div>
+            <strong>{convertDateFormat(stock.date)}</strong>
+            </div>
+            <div>거래량: {stock.trading_volume.toLocaleString()}</div>
+        </div>
+        );
+    }
+
+    return null;
+}
+
 
 export default function StockChart({ data }: Props) {
     // 날짜 오름차순 정렬
@@ -321,6 +339,7 @@ export default function StockChart({ data }: Props) {
                                 tickFormatter={(value) => value.toLocaleString()}
                                 domain={[0, 'dataMax']}
                             />
+                            <Tooltip content={<CustomTradingVolumeTooltip />} />
                             <Bar dataKey="trading_volume" fill="#8884d8" barSize={20} />
                             </BarChart>
                         </ResponsiveContainer>
