@@ -14,7 +14,16 @@ export default function NavBar() {
     };
 
     return (
-        <nav className="w-full flex justify-end items-center py-1 px-4 bg-[#242730] rounded-b-md mb-6 text-white sticky top-0 z-50">
+        <nav className="w-full flex justify-between items-center py-1 px-4 bg-[#242730] rounded-b-md mb-6 text-white sticky top-0 z-50">
+            <div className="flex items-center">
+                <img
+                    src="/tickerNowIcon.png" // ← 여기에 이미지 경로 설정
+                    alt="Logo"
+                    className="cursor-pointer w-[130px] h-[40px]"
+                    onClick={() => (window.location.href = "/")}
+                />
+            </div>
+        
         {isLoggedIn && user ? (
             <div className="relative">
                     <button
